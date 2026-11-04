@@ -1,0 +1,2259 @@
+# -*- coding: utf-8 -*-
+"""
+v1 : Pong game barebones. Simple game with a ball, two paddles and a scoreboard 
+v2 : Version wall. Menu and Intro sequence. PrHEIdator branding + Flask server and mobile app
+v3 : Poder gamemode + sound design
+v4 : 4 Players gamemode
+v5 : Removed Server and mobile app + Architecture review
+
+next
+v6 : True AI (Keras library)
+
+@version : v5.0.1
+@authors: Clement LEROY
+"""
+
+from pathlib import Path
+
+import pygame                   # PYGAME package
+from pygame.locals import *     # PYGAME constant & functions
+from sys import exit   
+import numpy as np
+import random as rd
+from math import pi,sqrt,exp
+
+
+
+PROJECT_DIR = Path(__file__).resolve().parent
+
+
+def asset_path(relative_path):
+    """Resolve bundled assets independently of the launch directory."""
+    return str(PROJECT_DIR / relative_path)
+
+#initialisation pygame
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((800, 450))
+
+# sound
+soundIntro = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/generique.mp3'))
+MusicMenu = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/Menu.wav'))
+Music2J = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/2joueurs.wav'))
+MusicElPoder = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/PODER.wav'))
+MusicIA = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/VsIA.wav'))
+MusicWall = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/VsWall.wav'))
+Music4J = pygame.mixer.Sound(asset_path('src/SoundPackage/Music/4joueurs.wav'))
+
+soundRebondRaquette = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/reboundJoueur2.wav'))
+soundRebondWallH = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/reboundWallH.wav'))
+soundRebondVsWall = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/reboundVsWall.wav'))
+gameOverSound = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/losing.wav'))
+plusOne = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/plusOne.wav'))
+minusOne = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/minusOne.wav'))
+soundSpeed = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/speed.wav'))
+soundAttack = pygame.mixer.Sound(asset_path('src/SoundPackage/Sound/nani.wav'))
+
+
+#Variable raquette 1 et 2
+x1,y1= 10,200
+color1 = (0, 0, 255)
+x2,y2=780,200
+color2 = (255, 0, 0)
+x3,y3 = 375, 10 
+x4,y4 = 375, 430
+
+#Variable de la balle
+color3 = (255, 255, 255)
+dx,dy = 1,3
+xball,yball=400,240
+
+#Variable de scores
+ScoreJ1,ScoreJ2,ScoreJ3,ScoreJ4=0,0,0,0
+Xs,Ys=375,20
+
+
+#Variables Intro
+StartAnimLogo=0
+EndAnimLogo=45
+StartAnimTitle=0
+EndAnimTitle=45
+
+# Colors
+white=(255, 255, 255)
+black=(0, 0, 0)
+gray=(50, 50, 50)
+red=(255, 0, 0)
+green=(0, 255, 0)
+blue=(0, 0, 255)
+yellow=(255, 255, 0)
+Colorlst=np.array([white,gray,red,blue,green,yellow])
+#Police
+policeGO=pygame.font.Font(asset_path('WRESTLEMANIA.ttf'),72)
+policeMenu=pygame.font.Font(asset_path('WRESTLEMANIA.ttf'),45)
+
+#import horloge
+fps=100
+clock = pygame.time.Clock()
+
+#Variable musique
+OnceMusic=True
+OnceGOMusic=True
+
+#Variable jeux GO
+Time=0
+
+#Variable animationJEUX
+REZ=True
+
+#ZoneDetection et  parametres IA
+ZoneDetection = 0.9
+mu = 0.4
+sigma = 0.1
+epsilon = 0.15
+cap = 0.95
+
+#Variable [Type IA]
+DeepIA=False
+
+#Variable [PODER VERSION]
+Pj1=0
+Pj2=0
+xp1,yp1= 10,400
+xp2,yp2=730,400
+rP1,rP2=blue,red
+
+#Variable [4joueurs VERSION]
+lastTouch=0
+
+#Variable [Wall]
+
+#Variable  booleen de jeux
+Pong=True
+
+AcceuilIntro=True #•set true to have the introduction
+AcceuilGeneral=False
+Acceuil2joueur=False
+Acceuil1joueur=False
+Acceuil4joueur=False
+AcceuilOption=False 
+
+GameOver=False
+Game2pClassic=False
+Game2pPoder=False
+Game2pFun=False
+Game1pIA=False
+Game1pWall=False
+Game4p=False
+
+#definition du menu selectionné
+selected=["1joueur","2joueurs","4joueurs","Option"]
+posSelMenu=0
+#definition du menu selectionné V2J
+selected2J=["Classic","Poder","Fun","Return"]
+posSelMenu2J=0
+#definition du menu selectionné V1J
+selected1J=["Ia","Wall","Return"]
+posSelMenu1J=0
+#definition du menu selectionné V4J
+selected4J=["4j","Return"]
+posSelMenu4J=0
+
+
+while Pong:
+        #Chargement et affichage de l'écran d'accueil
+        
+        #On remet ces variables à 1 à chaque tour de boucle
+        Pong=True
+        OnceMusic=True
+        if AcceuilIntro == False:
+            print("check")
+            AcceuilGeneral=True
+        
+        #BOUCLE INTRODUCTION
+        while AcceuilIntro:
+             #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            
+            #sound
+            if OnceMusic:
+                soundIntro.play()
+                OnceMusic=False
+            #paramettrage acceuil
+            title = pygame.image.load(asset_path("src/Images/title.png")).convert()
+            #title=pygame.transform.scale(title,(200,200))
+            title.set_alpha(StartAnimTitle)
+            
+            logo = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            logo=pygame.transform.scale(logo,(200,200))
+            logo.set_alpha(StartAnimLogo)
+            
+            #animation
+            if StartAnimLogo < EndAnimLogo:
+                StartAnimLogo=StartAnimLogo+1
+            else:
+                if StartAnimTitle < EndAnimTitle:
+                    
+                    StartAnimTitle=StartAnimTitle+1
+                else:
+                    soundIntro.stop()
+                    AcceuilGeneral=True
+                    AcceuilIntro=False
+                  
+            screen.blit(title, (250,250))
+            screen.blit(logo, (300,50))
+            
+        
+            pygame.display.flip() #MAJ ecran
+            
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        AcceuilIntro=False
+                        AcceuilGeneral=False
+                        Acceuil2joueur=False
+                        Acceuil1joueur=False
+                        Acceuil4joueur=False
+                        AcceuilOption=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+            
+            
+
+            
+            
+        #BOUCLE D'ACCUEIL general ------------------------------------------------------------------------------------------------
+        while AcceuilGeneral:
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            #reset Time
+            Time = 0
+            #reset GO Music Value
+            OnceGOMusic=True
+            #reset Parti variable
+            ScoreJ1,ScoreJ2,ScoreJ3,ScoreJ4=0,0,0,0
+            Pj1=0
+            Pj2=0
+            x1,y1= 10,200
+            x2,y2=780,200
+            x3,y3 = 375, 10 
+            x4,y4 = 375, 430
+            dx,dy = 1,3
+            xball,yball=400,240
+            REZ=True
+
+            
+             #sound
+            if OnceMusic:
+                MusicMenu.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+                
+            
+            #paramettrage acceuil
+            image = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            image=pygame.transform.scale(image,(200,200))
+            
+            
+            title = pygame.image.load(asset_path("src/Images/Gtitle.png")).convert()
+            title=pygame.transform.scale(title,(200,75))
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Acceuil=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+                        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rect1j.collidepoint(event.pos):
+                        Acceuil1joueur=True
+                        AcceuilGeneral=False
+                        nbPlayers=1
+                if rect2j.collidepoint(event.pos):
+                        Acceuil2joueur=True
+                        AcceuilGeneral=False
+                        nbPlayers=2
+
+                if rect4j.collidepoint(event.pos):
+                        Acceuil4joueur=True
+                        AcceuilGeneral=False
+                        nbPlayers=4
+                if rectO.collidepoint(event.pos):
+                        AcceuilOption=True
+                        AcceuilGeneral=False
+            
+            
+                        
+             
+                
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_RETURN]: 
+                if selected[posSelMenu]=="2joueurs":
+                    Acceuil2joueur=True
+                    AcceuilGeneral=False
+                    nbPlayers=2
+                if selected[posSelMenu]=="1joueur":
+                    Acceuil1joueur=True
+                    AcceuilGeneral=False
+                    nbPlayers=1
+                if selected[posSelMenu]=="4joueurs":
+                    Acceuil4joueur=True
+                    AcceuilGeneral=False
+                    nbPlayers=4
+                if selected[posSelMenu]=="Option":
+                    AcceuilOption=True
+                    AcceuilGeneral=False
+
+                    
+             #MAPPING TOUCHE MENU
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_UP:
+                    if posSelMenu <= 0:
+                        posSelMenu=3
+                    else:
+                        posSelMenu-=1
+                elif event.key==pygame.K_DOWN:
+                    if posSelMenu >= 3:
+                        posSelMenu=0
+                    else:
+                        posSelMenu+=1
+
+
+
+
+                        
+            
+            #Create menu  
+            if selected[posSelMenu]=="1joueur":
+                print(selected[posSelMenu])
+                Mode1j = policeMenu.render("1 joueur",True,yellow)
+                rect1j = Mode1j.get_rect()
+                rect1j.x,rect1j.y=550,50
+                screen.blit(Mode1j,rect1j)
+            else:
+                Mode1j = policeMenu.render("1 joueur",True,white)
+                rect1j = Mode1j.get_rect()
+                rect1j.x,rect1j.y=550,50
+                screen.blit(Mode1j,rect1j)
+            
+            if selected[posSelMenu]=="2joueurs":
+                print(selected[posSelMenu])
+                Mode2j = policeMenu.render("2 joueurs",True,yellow)
+                rect2j = Mode2j.get_rect()
+                rect2j.x,rect2j.y=550,100
+                screen.blit(Mode2j,rect2j)
+            else:
+                Mode2j = policeMenu.render("2 joueurs",True,white)
+                rect2j = Mode2j.get_rect()
+                rect2j.x,rect2j.y=550,100
+                screen.blit(Mode2j,rect2j)
+                
+            if selected[posSelMenu]=="4joueurs":
+                print(selected[posSelMenu])
+                Mode4j = policeMenu.render("4 joueurs",True,yellow)
+                rect4j = Mode4j.get_rect()
+                rect4j.x,rect4j.y=550,150
+                screen.blit(Mode4j,rect4j)
+            else:
+                Mode4j = policeMenu.render("4 joueurs",True,white)
+                rect4j = Mode4j.get_rect()
+                rect4j.x,rect4j.y=550,150
+                screen.blit(Mode4j,rect4j)
+                
+            if selected[posSelMenu]=="Option":
+                print(selected[posSelMenu])
+                ModeO = policeMenu.render("Option",True,yellow)
+                rectO = ModeO.get_rect()
+                rectO.x,rectO.y=550,200
+                screen.blit(ModeO,rectO)
+            else:
+                ModeO = policeMenu.render("Option",True,white)
+                rectO = ModeO.get_rect()
+                rectO.x,rectO.y=550,200
+                screen.blit(ModeO,rectO)
+                
+            ModeC = policeMenu.render("Credit & Quit",True,white)
+            rectC = ModeO.get_rect()
+            rectC.x,rectC.y=550,250
+            screen.blit(ModeC,rectC)    
+            
+            screen.blit(image, (75,100))
+            screen.blit(title, (75,300))
+            pygame.display.flip() #MAJ ecran
+            
+            
+            
+            
+       #BOUCLE D'ACCUEIL 2joueur ------------------------------------------------------------------------------------------------
+        while Acceuil2joueur:
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            #♠reset Time
+            Time = 0
+            #reset GO Music Value
+            OnceGOMusic=True
+            
+
+            
+             #sound
+            if OnceMusic:
+                MusicMenu.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+                
+            
+            #paramettrage acceuil
+            image = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            image=pygame.transform.scale(image,(200,200))
+            
+            
+            title = pygame.image.load(asset_path("src/Images/Gtitle.png")).convert()
+            title=pygame.transform.scale(title,(200,75))
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Acceuil=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+                        
+                        
+                        
+                        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rectClassic.collidepoint(event.pos):
+                     MusicMenu.stop()
+                     Game2pClassic=True
+                     Acceuil2joueur=False
+                if rectPODER.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    Game2pPoder=True
+                    Acceuil2joueur=False
+                if rectReturn.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil2joueur=False
+           
+                    
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_RETURN]: 
+                if selected2J[posSelMenu2J]=="Classic":
+                    MusicMenu.stop()
+                    Game2pClassic=True
+                    Acceuil2joueur=False
+                if selected2J[posSelMenu2J]=="Poder":
+                    MusicMenu.stop()
+                    Game2pPoder=True
+                    Acceuil2joueur=False
+                    
+                if selected2J[posSelMenu2J]=="Return":
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil2joueur=False
+
+
+
+            try:
+                key = listK[pos]
+                if key=='4':
+                    if selected2J[posSelMenu2J] == "Classic":
+                        MusicMenu.stop()
+                        Game2pClassic = True
+                        Acceuil2joueur = False
+                    if selected2J[posSelMenu2J] == "Poder":
+                        MusicMenu.stop()
+                        Game2pPoder = True
+                        Acceuil2joueur = False
+
+                    if selected2J[posSelMenu2J] == "Return":
+                        MusicMenu.stop()
+                        AcceuilGeneral = True
+                        Acceuil2joueur = False
+                elif key=='0':
+                    if posSelMenu2J <= 0:
+                        posSelMenu2J = 3
+                    else:
+                        posSelMenu2J -= 1
+                elif key=='1':
+                    if posSelMenu2J >= 3:
+                        posSelMenu2J = 0
+                    else:
+                        posSelMenu2J += 1
+                pos+=1
+            except:
+                pass
+                    
+             #MAPPING TOUCHE MENU
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_UP:
+                    if posSelMenu2J <= 0:
+                        posSelMenu2J=3
+                    else:
+                        posSelMenu2J-=1
+                elif event.key==pygame.K_DOWN:
+                    if posSelMenu2J >= 3:
+                        posSelMenu2J=0
+                    else:
+                        posSelMenu2J+=1
+                        
+                        
+                
+            if selected2J[posSelMenu2J]=="Classic":
+                print(selected2J[posSelMenu2J])
+                ModeClassic = policeMenu.render("Classic",True,yellow)
+                rectClassic = ModeClassic.get_rect()
+                rectClassic.x,rectClassic.y=550,50
+                screen.blit(ModeClassic,rectClassic)
+            else:
+                ModeClassic = policeMenu.render("Classic",True,white)
+                rectClassic = ModeClassic.get_rect()
+                rectClassic.x,rectClassic.y=550,50
+                screen.blit(ModeClassic,rectClassic)
+            
+            if selected2J[posSelMenu2J]=="Poder":
+                print(selected2J[posSelMenu2J])
+                ModePODER = policeMenu.render("Poder",True,yellow)
+                rectPODER = ModePODER.get_rect()
+                rectPODER.x,rectPODER.y=550,100
+                screen.blit(ModePODER,rectPODER)
+            else:
+                ModePODER = policeMenu.render("Poder",True,white)
+                rectPODER = ModePODER.get_rect()
+                rectPODER.x,rectPODER.y=550,100
+                screen.blit(ModePODER,rectPODER)
+                
+            if selected2J[posSelMenu2J]=="Fun":
+                print(selected2J[posSelMenu2J])
+                ModeFun = policeMenu.render("Fun",True,yellow)
+                rectFun =ModeFun.get_rect()
+                rectFun.x,rectFun.y=550,150
+                screen.blit(ModeFun,rectFun)
+            else:
+                ModeFun = policeMenu.render("Fun",True,white)
+                rectFun =ModeFun.get_rect()
+                rectFun.x,rectFun.y=550,150
+                screen.blit(ModeFun,rectFun)
+                
+            if selected2J[posSelMenu2J]=="Return":
+                print(selected2J[posSelMenu2J])
+                ModeReturn = policeMenu.render("Return",True,yellow)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,200
+                screen.blit(ModeReturn,rectReturn)
+            else:
+                ModeReturn = policeMenu.render("Return",True,white)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,200
+                screen.blit(ModeReturn,rectReturn)
+                        
+          
+                      
+            screen.blit(image, (75,100))
+            screen.blit(title, (75,300))
+            pygame.display.flip() #MAJ ecran 
+            
+        
+        #BOUCLE D'ACCUEIL 4joueur ------------------------------------------------------------------------------------------------
+        while Acceuil4joueur:
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            #♠reset Time
+            Time = 0
+            #reset GO Music Value
+            OnceGOMusic=True
+
+             #sound
+            if OnceMusic:
+                MusicMenu.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+                
+            
+            #paramettrage acceuil
+            image = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            image=pygame.transform.scale(image,(200,200))
+            
+            
+            title = pygame.image.load(asset_path("src/Images/Gtitle.png")).convert()
+            title=pygame.transform.scale(title,(200,75))
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Acceuil=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+                        
+                        
+                        
+                        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rect4j.collidepoint(event.pos):
+                     MusicMenu.stop()
+                     Game4p=True
+                     Acceuil4joueur=False
+                
+                if rectReturn.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil4joueur=False
+           
+                    
+          
+                        
+          #Create sub menu
+          
+          
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_RETURN]: 
+                if selected4J[posSelMenu4J]=="4j":
+                     MusicMenu.stop()
+                     Game4p=True
+                     Acceuil4joueur=False
+                    
+                if selected4J[posSelMenu4J]=="Return":
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil4joueur=False
+                    
+             #MAPPING TOUCHE MENU
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_UP:
+                    if posSelMenu4J <= 0:
+                        posSelMenu4J=1
+                    else:
+                        posSelMenu4J-=1
+                elif event.key==pygame.K_DOWN:
+                    if posSelMenu4J >= 1:
+                        posSelMenu4J=0
+                    else:
+                        posSelMenu4J+=1
+
+            try:
+                key = listK[pos]
+                if key == '4':
+                    if selected4J[posSelMenu4J] == "4j":
+                        MusicMenu.stop()
+                        Game4p = True
+                        Acceuil4joueur = False
+
+                    if selected4J[posSelMenu4J] == "Return":
+                        MusicMenu.stop()
+                        AcceuilGeneral = True
+                        Acceuil4joueur = False
+                elif key=='0':
+                    if posSelMenu4J <= 0:
+                        posSelMenu4J = 1
+                    else:
+                        posSelMenu4J -= 1
+                elif key=='1':
+                    if posSelMenu4J >= 1:
+                        posSelMenu4J = 0
+                    else:
+                        posSelMenu4J += 1
+
+            except:
+                pass
+                
+            if selected4J[posSelMenu4J]=="4j":
+                print(selected4J[posSelMenu4J])
+                Mode4j = policeMenu.render("Classic",True,yellow)
+                rect4j =Mode4j.get_rect()
+                rect4j.x,rect4j.y=550,50
+                screen.blit(Mode4j,rect4j)
+            else:
+                Mode4j = policeMenu.render("Classic",True,white)
+                rect4j =Mode4j.get_rect()
+                rect4j.x,rect4j.y=550,50
+                screen.blit(Mode4j,rect4j)
+            
+    
+                
+            if selected4J[posSelMenu4J]=="Return":
+                print(selected4J[posSelMenu4J])
+                ModeReturn = policeMenu.render("Return",True,yellow)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,100
+                screen.blit(ModeReturn,rectReturn)
+            else:
+                ModeReturn = policeMenu.render("Return",True,white)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,100
+                screen.blit(ModeReturn,rectReturn)
+                
+            
+            
+            screen.blit(image, (75,100))
+            screen.blit(title, (75,300))
+            pygame.display.flip() #MAJ ecran 
+            
+            
+            
+        #BOUCLE D'ACCUEIL 1joueur ------------------------------------------------------------------------------------------------
+        while Acceuil1joueur:
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            #♠reset Time
+            Time = 0
+            #reset GO Music Value
+            OnceGOMusic=True
+            
+
+            
+             #sound
+            if OnceMusic:
+                MusicMenu.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+                
+            
+            #paramettrage acceuil
+            image = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            image=pygame.transform.scale(image,(200,200))
+            
+            
+            title = pygame.image.load(asset_path("src/Images/Gtitle.png")).convert()
+            title=pygame.transform.scale(title,(200,75))
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Acceuil=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+                        
+            
+                        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rectIa.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    Game1pIA=True
+                    Acceuil1joueur=False
+                
+                if rectReturn.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil1joueur=False
+                
+           
+           
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_RETURN]: 
+                if selected1J[posSelMenu1J]=="Return":
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    Acceuil1joueur=False
+                if selected1J[posSelMenu1J]=="Wall":
+                    MusicMenu.stop()
+                    Game1pWall=True
+                    Acceuil1joueur=False
+                if selected1J[posSelMenu1J]=="Ia":
+                    MusicMenu.stop()
+                    Game1pIA=True
+                    Acceuil1joueur=False
+                    
+             #MAPPING TOUCHE MENU
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_UP:
+                    if posSelMenu1J <= 0:
+                        posSelMenu1J=2
+                    else:
+                        posSelMenu1J-=1
+                elif event.key==pygame.K_DOWN:
+                    if posSelMenu1J >= 2:
+                        posSelMenu1J=0
+                    else:
+                        posSelMenu1J+=1
+                        
+            try:
+                key = listK[pos]
+                if key=='0':
+                    if posSelMenu1J <= 0:
+                        posSelMenu1J = 2
+                    else:
+                        posSelMenu1J -= 1
+                elif key=='1':
+                    if posSelMenu1J >= 2:
+                        posSelMenu1J = 0
+                    else:
+                        posSelMenu1J += 1
+                elif key=='4':
+                    if selected1J[posSelMenu1J] == "Return":
+                        MusicMenu.stop()
+                        AcceuilGeneral = True
+                        Acceuil1joueur = False
+                    if selected1J[posSelMenu1J] == "Wall":
+                        MusicMenu.stop()
+                        Game1pWall = True
+                        Acceuil1joueur = False
+                    if selected1J[posSelMenu1J] == "Ia":
+                        MusicMenu.stop()
+                        Game1pIA = True
+                        Acceuil1joueur = False
+                pos+=1
+            except:
+                pass
+                
+            if selected1J[posSelMenu1J]=="Ia":
+                print(selected1J[posSelMenu1J])
+                ModeIa = policeMenu.render("VS Ia",True,yellow)
+                rectIa = ModeIa.get_rect()
+                rectIa.x,rectIa.y=550,50
+                screen.blit(ModeIa,rectIa)
+            else:
+                ModeIa = policeMenu.render("VS Ia",True,white)
+                rectIa = ModeIa.get_rect()
+                rectIa.x,rectIa.y=550,50
+                screen.blit(ModeIa,rectIa)
+            
+            if selected1J[posSelMenu1J]=="Wall":
+                print(selected1J[posSelMenu1J])
+                ModeWall = policeMenu.render("VS The Wall",True,yellow)
+                rectWall = ModeWall.get_rect()
+                rectWall.x,rectWall.y=550,100
+                screen.blit(ModeWall,rectWall)
+            else:
+                ModeWall = policeMenu.render("VS The Wall",True,white)
+                rectWall = ModeWall.get_rect()
+                rectWall.x,rectWall.y=550,100
+                screen.blit(ModeWall,rectWall)
+                
+            if selected1J[posSelMenu1J]=="Return":
+                print(selected1J[posSelMenu1J])
+                ModeReturn = policeMenu.render("Return",True,yellow)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,150
+                screen.blit(ModeReturn,rectReturn)
+            else:
+                ModeReturn = policeMenu.render("Return",True,white)
+                rectReturn = ModeReturn.get_rect()
+                rectReturn.x,rectReturn.y=550,150
+                screen.blit(ModeReturn,rectReturn)
+            
+            screen.blit(image, (75,100))
+            screen.blit(title, (75,300))
+            pygame.display.flip() #MAJ ecran 
+        
+        #BOUCLE D'OPTION ------------------------------------------------------------------------------------------------
+        while AcceuilOption:
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            #Limitation de vitesse de la boucle
+            pygame.time.Clock().tick(10)
+            #♠reset Time
+            Time = 0
+            #reset GO Music Value
+            OnceGOMusic=True
+            
+
+            
+             #sound
+            if OnceMusic:
+                MusicMenu.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+                
+            
+            #paramettrage acceuil
+            image = pygame.image.load(asset_path("src/Images/logo.png")).convert()
+            image=pygame.transform.scale(image,(200,200))
+            
+            
+            title = pygame.image.load(asset_path("src/Images/Gtitle.png")).convert()
+            title=pygame.transform.scale(title,(200,75))
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Acceuil=False
+                        Game2pClassic=False
+                        Game2pPoder=False
+                        Game2pFun=False
+                        Game1pIA=False
+                        Game1pWall=False
+                        Game4p=False
+                        pygame.quit()
+                        exit()
+                        
+                        
+                        
+                        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rectIa.collidepoint(event.pos):
+                     if DeepIA == True:
+                         DeepIA = False
+                     else : 
+                         DeepIA = True
+                     MusicMenu.stop()
+                     AcceuilGeneral=True
+                     AcceuilOption=False
+                
+                if rectReturn.collidepoint(event.pos):
+                    MusicMenu.stop()
+                    AcceuilGeneral=True
+                    AcceuilOption=False
+
+            try:
+                key = listK[pos]
+                if key == '4':
+                    if rectIa.collidepoint(event.pos):
+                        if DeepIA == True:
+                            DeepIA = False
+                        else:
+                            DeepIA = True
+                        MusicMenu.stop()
+                        AcceuilGeneral = True
+                        AcceuilOption = False
+                    if rectReturn.collidepoint(event.pos):
+                        MusicMenu.stop()
+                        AcceuilGeneral = True
+                        AcceuilOption = False
+            except:
+                pass
+
+
+          #Create sub menu
+            ModeDefIa = policeMenu.render("DeepIA : "+str(DeepIA),True,white)
+            rectIa = ModeDefIa.get_rect()
+            rectIa.x,rectIa.y=550,50
+            screen.blit(ModeDefIa,rectIa)
+                
+            ModeReturn = policeMenu.render("Return",True,white)
+            rectReturn = ModeReturn.get_rect()
+            rectReturn.x,rectReturn.y=550,200
+            screen.blit(ModeReturn,rectReturn)
+                      
+            screen.blit(image, (75,100))
+            screen.blit(title, (75,300))
+            pygame.display.flip() #MAJ ecran 
+            
+        
+            
+        while Game2pClassic: # Mode de Jeux 2 joueurs Classic ----------------------------------------------------------------------------------------
+            
+            #music
+            if OnceMusic:
+                Music2J.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+            
+            
+            
+             #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Game2pClassic=False
+                        pygame.quit()
+                        exit()
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_UP]: 
+                if y2>0:
+                    y2 -= 3
+            if pressed[pygame.K_DOWN]:
+                if y2<350:
+                    y2 += 3
+            if pressed[pygame.K_a]: 
+                if y1>0:
+                    y1 -= 3
+            if pressed[pygame.K_q]:
+                if y1<350:
+                    y1 += 3
+
+            try:
+                key=listK[pos]
+                player=listP[pos]
+                if player==0:
+                    if key=='0':
+                        if y1 > 0:
+                            y1 -= 30
+                    elif key=='1':
+                        if y1 < 350:
+                            y1 += 30
+                elif player==1:
+                    if key=='0':
+                        if y2 > 0:
+                            y2 -= 30
+                    elif key=='1':
+                        if y2 < 350:
+                            y2 += 30
+                pos+=1
+            except:
+                pass
+
+
+            
+            #reset ecran
+            if REZ:
+                screen.fill((0, 0, 0))
+                REZ=False
+            
+            # ajout objet
+            r1=pygame.draw.rect(screen, color1, pygame.Rect(x1, y1, 10, 100))
+            r2=pygame.draw.rect(screen, color2, pygame.Rect(x2, y2, 10, 100))
+            ball=pygame.draw.circle(screen,color3,(xball,yball), 5)
+            texte = policeGO.render(str(ScoreJ1)+"  "+str(ScoreJ2),True,(150,150,150))
+            rectTexte = texte.get_rect()
+            rectTexte.x,rectTexte.y=Xs,Ys
+            screen.blit(texte,rectTexte)
+            
+            
+            # MODIF ANGLE JOUEURS
+            def angleJ1():
+                global yball,dx,dy,xball
+                if r1.y <= yball < r1.y+35 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r1.y+35 <= yball < r1.y+65 and ball.colliderect(r1):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if dx>2:
+                        dx-=1
+                if r1.y+65 <= yball < r1.y+100 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy-=2
+                        
+            def angleJ2():
+                global yball,dx,dy,xball
+                if r2.y <= yball < r2.y+35 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r2.y+35 <= yball < r2.y+65 and ball.colliderect(r2):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if dx>2:
+                        dx+=1
+                if r2.y+65 <= yball < r2.y+100 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy-=2
+                    
+                    
+            #VERIFICATION SCORE
+            def checkScore():
+                global ScoreJ1,ScoreJ2,dx,dy
+                if ScoreJ1>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ2>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                    
+                    
+           #GAME OVER
+            def GO():
+                global Time,AcceuilGeneral,Game2pClassic,dx,dy,y2,y1,OnceGOMusic,r1,r2
+                if OnceGOMusic:
+                    gameOverSound.play()
+                    OnceGOMusic=False
+                texteGO = policeGO.render("GAME OVER",True,(150,150,150))
+                rectTexte = texte.get_rect()
+                rectTexte.x,rectTexte.y=250,150
+                screen.blit(texteGO,rectTexte)
+                print(Time)
+                if Time>=280:
+                    Game2pClassic=False
+                    AcceuilGeneral=True
+                    dx,dy = 0,0
+                    Music2J.stop()
+                    
+                    
+                else:
+                    Time+=1
+                    Music2J.stop()
+                    if ScoreJ1>=5:
+                        if y2< 450:
+                            y2+=3
+                    if ScoreJ2>=5:
+                        if y1< 450:
+                            y1+=3
+                           
+            #Animation POINT
+            def AnimPj1():
+                global blue,screen
+                screen.fill(blue)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj2():
+                global red,screen
+                screen.fill(red)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeed():
+                global white,screen
+                screen.fill(white)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeedD():
+                global gray,screen
+                screen.fill(gray)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def resetAnim():
+                global REZ
+                REZ=True
+                 
+                 
+            #REACTION ET MVT DE LA BALLE
+            def mouvement():
+                global dx,dy, xball, yball,ScoreJ1,ScoreJ2
+                xball+=dx
+                yball+=dy
+                
+                #si touche le mur du haut ou du bas => rebond
+                if yball <= 0:
+                    soundRebondWallH.play()
+                    dy=-dy
+                if yball >= 450:
+                    soundRebondWallH.play()
+                    dy=-dy
+                #Si mur de droite ou de gauche => Point pour le joueur inverse & 
+                if xball<=0:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    ScoreJ2+=1
+                    AnimPj2()
+                if xball>=800:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    ScoreJ1+=1
+                    AnimPj1()
+                if ball.colliderect(r1):
+                    xball+=10
+                    dx=-dx
+                    angleJ1()
+                if ball.colliderect(r2):
+                    xball-=10
+                    dx=-dx
+                    angleJ2()
+                    
+            mouvement()
+            checkScore()
+            resetAnim()
+            pygame.display.flip()
+            clock.tick(fps)
+            
+        
+        while Game2pPoder: # Mode de Jeux 2 joueurs PODER ----------------------------------------------------------------------------------------
+            
+            
+            
+            #music
+            if OnceMusic:
+                
+                MusicElPoder.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+            
+            
+            
+             #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Game2pPoder=False
+                        pygame.quit()
+                        exit()
+                        
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_UP]: 
+                if y2>0:
+                    y2 -= 3
+            if pressed[pygame.K_DOWN]:
+                if y2<350:
+                    y2 += 3
+            if pressed[pygame.K_a]: 
+                if y1>0:
+                    y1 -= 3
+            if pressed[pygame.K_q]:
+                if y1<350:
+                    y1 += 3
+            if pressed[pygame.K_s]: 
+                if Pj1>=2:
+                    attaqueJ1()
+            if pressed[pygame.K_LEFT]:
+                if Pj2>=2:
+                    attaqueJ2()
+
+            try:
+                key=listK[pos]
+                player=listP[pos]
+                if player==0:
+                    if key=='0':
+                        if y1 > 0:
+                            y1 -= 30
+                    elif key=='1':
+                        if y1 < 350:
+                            y1 += 30
+                    elif key=='4':
+                        if Pj1 >= 2:
+                            attaqueJ1()
+                elif player==1:
+                    if key=='0':
+                        if y2 > 0:
+                            y2 -= 30
+                    elif key=='1':
+                        if y2 < 350:
+                            y2 += 30
+                    elif key=='4':
+                        if Pj2 >= 2:
+                            attaqueJ2()
+                pos+=1
+            except:
+                pass
+
+                
+            #reset ecran
+            screen.fill((0, 0, 0))
+            
+            # ajout objet
+            r1=pygame.draw.rect(screen, color1, pygame.Rect(x1, y1, 10, 100))
+            r2=pygame.draw.rect(screen, color2, pygame.Rect(x2, y2, 10, 100))
+            rP1e=pygame.draw.rect(screen,rP1,pygame.Rect(xp1,yp1,25*Pj1,10))
+            rP2e=pygame.draw.rect(screen,rP2,pygame.Rect(xp2,yp2,25*Pj2,10))
+            
+            
+            ball=pygame.draw.circle(screen,color3,(xball,yball), 5)
+            texte = policeGO.render(str(ScoreJ1)+"  "+str(ScoreJ2),True,(150,150,150))
+            rectTexte = texte.get_rect()
+            rectTexte.x,rectTexte.y=Xs,Ys
+            screen.blit(texte,rectTexte)
+            
+            
+            
+            #Fonction Attaque
+            def attaqueJ1():
+                global dx,dy,Pj1
+                if ball.y > r1.y and ball.y < r1.y+100:
+                    if ball.x < 30:
+                        soundAttack.play()
+                        dx=10
+                        dy=0
+                        Pj1=0
+            def attaqueJ2():
+                global dx,dy,Pj2
+                if ball.y > r2.y and ball.y < r2.y+100:
+                    if ball.x > 760:
+                        soundAttack.play()
+                        dx=-10
+                        dy=0
+                        Pj2=0
+                        
+                        
+            # MODIF ANGLE JOUEURS
+            def angleJ1():
+                global yball,dx,dy,xball,Pj1
+                if r1.y <= yball < r1.y+35 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r1.y+35 <= yball < r1.y+65 and ball.colliderect(r1):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if Pj1<2:
+                        Pj1+=1
+                    if dx>2:
+                        dx-=1
+                if r1.y+65 <= yball < r1.y+100 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy-=2
+                        
+            def angleJ2():
+                global yball,dx,dy,xball,Pj2
+                if r2.y <= yball < r2.y+35 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r2.y+35 <= yball < r2.y+65 and ball.colliderect(r2):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if Pj2<2:
+                        Pj2+=1
+                    if dx>2:
+                        dx+=1
+                if r2.y+65 <= yball < r2.y+100 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy-=2
+                    
+            def PODERbarJ1():
+                global rP1,Pj1,Colorlst,white,blue
+                if Pj1<2:
+                    rP1=blue
+                if Pj1==2:
+                    rP1=Colorlst[rd.randint(0,5)]  
+                
+            def PODERbarJ2():
+                global rP2,Pj2,Colorlst,white,red
+                if Pj2<2:
+                    rP2=red
+                if Pj2==2:
+                    rP2=Colorlst[rd.randint(0,5)]
+                
+             #Animation POINT
+            def AnimPj1():
+                global blue,screen
+                screen.fill(blue)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj2():
+                global red,screen
+                screen.fill(red)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeed():
+                global white,screen
+                screen.fill(white)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeedD():
+                global gray,screen
+                screen.fill(gray)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def resetAnim():
+                global REZ
+                REZ=True
+                
+            
+            #VERIFICATION SCORE
+            def checkScore():
+                global ScoreJ1,ScoreJ2,dx,dy
+                if ScoreJ1>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ2>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                    
+            
+           #GAME OVER
+            def GO():
+                global Time,AcceuilGeneral,Game2pPoder,dx,dy,y2,y1,OnceGOMusic,r1,r2
+                if OnceGOMusic:
+                    gameOverSound.play()
+                    OnceGOMusic=False
+                texteGO = policeGO.render("GAME OVER",True,(150,150,150))
+                rectTexte = texte.get_rect()
+                rectTexte.x,rectTexte.y=250,150
+                screen.blit(texteGO,rectTexte)
+                print(Time)
+                if Time>=280:
+                    Game2pPoder=False
+                    AcceuilGeneral=True
+                    dx,dy = 0,0
+                    MusicElPoder.stop()
+                    
+                    
+                else:
+                    Time+=1
+                    MusicElPoder.stop()
+                    if ScoreJ1>=5:
+                        if y2< 450:
+                            y2+=3
+                    if ScoreJ2>=5:
+                        if y1< 450:
+                            y1+=3
+                           
+                
+            #REACTION ET MVT DE LA BALLE
+            def mouvement():
+                global dx,dy, xball, yball,ScoreJ1,ScoreJ2,Pj1,Pj2
+                xball+=dx
+                yball+=dy
+                
+                #si touche le mur du haut ou du bas => rebond
+                if yball <= 0:
+                    soundRebondWallH.play()
+                    dy=-dy
+                if yball >= 450:
+                    soundRebondWallH.play()
+                    dy=-dy
+                #Si mur de droite ou de gauche => Point pour le joueur inverse & 
+                if xball<=0:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    ScoreJ2+=1
+                    AnimPj2()
+                    Pj1=0
+                if xball>=800:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    ScoreJ1+=1
+                    AnimPj1()
+                    Pj2=0
+                if ball.colliderect(r1):
+                    xball+=10
+                    dx=-dx
+                    angleJ1()
+                    PODERbarJ1()
+                if ball.colliderect(r2):
+                    xball-=10
+                    dx=-dx
+                    angleJ2()
+                    PODERbarJ2()
+                    
+            mouvement()
+            PODERbarJ1()
+            PODERbarJ2()
+            checkScore()
+            resetAnim()
+            pygame.display.flip()
+            clock.tick(fps) 
+        
+        while Game1pIA: # Mode de Jeux VS IA ----------------------------------------------------------------------------------------
+            
+            #music
+            if OnceMusic:
+                
+                MusicIA.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+            
+            
+            
+             #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Game2pClassic=False
+                        pygame.quit()
+                        exit()
+                        
+            #mapping des touches du joueur1
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_a]: 
+                if y1>0:
+                    y1 -= 3
+            if pressed[pygame.K_q]:
+                if y1<350:
+                    y1 += 3
+
+            try:
+                key=listK[pos]
+                if key=='0':
+                    if y1 > 0:
+                        y1 -= 35
+                elif key=='1':
+                    if y1 < 350:
+                        y1 += 35
+                pos+=1
+            except:
+                pass
+            
+            
+           
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            # ajout objet
+            r1=pygame.draw.rect(screen, color1, pygame.Rect(x1, y1, 10, 100))
+            r2=pygame.draw.rect(screen, color2, pygame.Rect(x2, y2, 10, 100))
+            ball=pygame.draw.circle(screen,color3,(xball,yball), 5)
+            texte = policeGO.render(str(ScoreJ1)+"  "+str(ScoreJ2),True,(150,150,150))
+            rectTexte = texte.get_rect()
+            rectTexte.x,rectTexte.y=Xs,Ys
+            screen.blit(texte,rectTexte)
+            
+            
+            
+            
+             #Animation POINT
+            def AnimPj1():
+                global blue,screen
+                screen.fill(blue)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj2():
+                global red,screen
+                screen.fill(red)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeed():
+                global white,screen
+                screen.fill(white)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeedD():
+                global gray,screen
+                screen.fill(gray)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def resetAnim():
+                global REZ
+                REZ=True
+            
+            
+            
+             #Fonction IA/bot pour le joueur 2
+            def loi_normale_x_spot(x,mu,sigma):
+                    return round((1/(sigma*sqrt(2*pi))) * exp(((-1)/2)*((x-mu)/sigma)*((x-mu)/sigma)),5)
+    
+            def valeur_normale(mu,sigma,epsilon,cap):
+                #valeur finale
+                x, y = rd.random(), rd.random()# variables random
+                var = abs(x-y)
+                print("var="+str(var))
+                
+                n = 2000
+                x1, dx = 0, var/n # current position and increment
+                integral = 0
+            
+                for i in range(n):
+                    integral += (loi_normale_x_spot(x1,mu,sigma) + loi_normale_x_spot(x1+dx,mu,sigma))*0.5*dx # integration par la methode des trapezes
+                    # maj des variables
+                    x1 += dx
+                
+                res = min(round(integral,2)+epsilon,cap)
+                return res
+        
+            def ZoneDetectionUpdate():
+                    return valeur_normale(sigma,mu,epsilon,cap)
+            
+            def ia () :
+                global ZoneDetection, y2,DeepIA
+                if DeepIA == False:
+                    if ball.x > 800*ZoneDetection:
+                        if ball.y < r2.y+50:
+                             if y2>0:
+                                 y2-=4
+                        if ball.y > r2.y+50:
+                            if y2<350:
+                                y2+=4
+           
+            # MODIF ANGLE JOUEURS
+            def angleJ1():
+                global yball,dx,dy,xball
+                if r1.y <= yball < r1.y+35 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r1.y+35 <= yball < r1.y+65 and ball.colliderect(r1):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if dx>2:
+                        dx-=1
+                if r1.y+65 <= yball < r1.y+100 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy-=2
+                        
+            def angleJ2():
+                global yball,dx,dy,xball
+                if r2.y <= yball < r2.y+35 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r2.y+35 <= yball < r2.y+65 and ball.colliderect(r2):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if dx>2:
+                        dx+=1
+                if r2.y+65 <= yball < r2.y+100 and ball.colliderect(r2):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if abs(dx)<5:
+                        dx-=1
+                    if abs(dy)<10:
+                        dy-=2
+                    
+                    
+            #VERIFICATION SCORE
+            def checkScore():
+                global ScoreJ1,ScoreJ2,dx,dy
+                if ScoreJ1>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ2>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                    
+                    
+           #GAME OVER
+            def GO():
+                global Time,AcceuilGeneral,Game1pIA,dx,dy,y2,y1,OnceGOMusic,r1,r2
+                if OnceGOMusic:
+                    gameOverSound.play()
+                    OnceGOMusic=False
+                texteGO = policeGO.render("GAME OVER",True,(150,150,150))
+                rectTexte = texte.get_rect()
+                rectTexte.x,rectTexte.y=250,150
+                screen.blit(texteGO,rectTexte)
+                print(Time)
+                if Time>=280:
+                    Game1pIA=False
+                    AcceuilGeneral=True
+                    dx,dy = 1,3
+                    MusicIA.stop()
+                    
+                    
+                else:
+                    Time+=1
+                    MusicIA.stop()
+                    if ScoreJ1>=5:
+                        if y2< 450:
+                            y2+=3
+                    if ScoreJ2>=5:
+                        if y1< 450:
+                            y1+=3
+                           
+                
+            #REACTION ET MVT DE LA BALLE
+            def mouvement():
+                global dx,dy, xball, yball,ScoreJ1,ScoreJ2,ZoneDetection
+                xball+=dx
+                yball+=dy
+                
+                #si touche le mur du haut ou du bas => rebond
+                if yball <= 0:
+                    soundRebondWallH.play()
+                    dy=-dy
+                if yball >= 450:
+                    soundRebondWallH.play()
+                    dy=-dy
+                #Si mur de droite ou de gauche => Point pour le joueur inverse & 
+                if xball<=0:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    ScoreJ2+=1
+                    AnimPj2()
+                if xball>=800:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    plusOne.play()
+                    ScoreJ1+=1
+                    AnimPj1()
+                if ball.colliderect(r1):
+                    xball+=10
+                    dx=-dx
+                    angleJ1()
+                if ball.colliderect(r2):
+                    xball-=10
+                    dx=-dx
+                    angleJ2()
+                    ZoneDetection = ZoneDetectionUpdate()
+                    
+            mouvement()
+            ia()
+            checkScore()
+            resetAnim()
+            pygame.display.flip()
+            clock.tick(fps)
+            
+            
+        while Game1pWall: # Mode de Jeux 2 joueurs Classic ----------------------------------------------------------------------------------------
+            
+            #music
+            if OnceMusic:
+                MusicWall.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+            
+            
+            
+             #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Game2pClassic=False
+                        pygame.quit()
+                        exit()
+                        
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_a]: 
+                if y1>0:
+                    y1 -= 3
+            if pressed[pygame.K_q]:
+                if y1<350:
+                    y1 += 3
+
+            try:
+                key=listK[pos]
+                if key=='0':
+                    if y1 > 0:
+                        y1 -= 35
+                elif key=='1':
+                    if y1 < 350:
+                        y1 += 35
+                pos+=1
+            except:
+                pass
+
+            #reset ecran
+            screen.fill((0, 0, 0))
+            # ajout objet
+            r1=pygame.draw.rect(screen, color1, pygame.Rect(x1, y1, 10, 100))
+            ball=pygame.draw.circle(screen,color3,(xball,yball), 5)
+            texte = policeGO.render(str(ScoreJ1),True,(150,150,150))
+            rectTexte = texte.get_rect()
+            rectTexte.x,rectTexte.y=Xs,Ys
+            screen.blit(texte,rectTexte)
+            
+            
+            
+            
+             #Animation POINT
+            def AnimPj1():
+                global blue,screen
+                screen.fill(blue)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj2():
+                global red,screen
+                screen.fill(red)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeed():
+                global white,screen
+                screen.fill(white)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeedD():
+                global gray,screen
+                screen.fill(gray)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def resetAnim():
+                global REZ
+                REZ=True
+                
+                
+            # MODIF ANGLE JOUEURS
+            
+            def angleJ1():
+                global yball,dx,dy,xball
+                if r1.y <= yball < r1.y+35 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy+=2
+                if r1.y+35 <= yball < r1.y+65 and ball.colliderect(r1):
+                    soundRebondRaquette.play()
+                    AnimSpeedD()
+                    if dx>2:
+                        dx-=1
+                if r1.y+65 <= yball < r1.y+100 and ball.colliderect(r1):
+                    soundSpeed.play()
+                    AnimSpeed()
+                    if dx<5:
+                        dx+=1
+                    if abs(dy)<10:
+                        dy-=2
+                        
+            
+                    
+           #GAME OVER
+            def GO():
+                global Time,AcceuilGeneral,Game1pWall,dx,dy,y2,y1,OnceGOMusic,r1,r2
+                if OnceGOMusic:
+                    gameOverSound.play()
+                    OnceGOMusic=False
+                texteGO = policeGO.render("GAME OVER",True,(150,150,150))
+                rectTexte = texte.get_rect()
+                rectTexte.x,rectTexte.y=250,150
+                screen.blit(texteGO,rectTexte)
+                print(Time)
+                if Time>=280:
+                    Game1pWall=False
+                    AcceuilGeneral=True
+                    dx,dy = 1,3
+                    MusicWall.stop()
+                    
+                    
+                else:
+                    Time+=1
+                    MusicWall.stop()
+                    if ScoreJ1>=5:
+                        if y2< 450:
+                            y2+=3
+                    if ScoreJ2>=5:
+                        if y1< 450:
+                            y1+=3
+                           
+                
+            #REACTION ET MVT DE LA BALLE
+            def mouvement():
+                global dx,dy, xball, yball,ScoreJ1,ScoreJ2
+                xball+=dx
+                yball+=dy
+                
+                #si touche le mur du haut ou du bas => rebond
+                if yball <= 0:
+                    soundRebondWallH.play()
+                    dy=-dy
+                if yball >= 450:
+                    soundRebondWallH.play()
+                    dy=-dy
+                #Si mur de droite ou de gauche => Point pour le joueur inverse & 
+                if xball<=0:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    GO()
+                if xball>=800:
+                    dx=-dx
+                    soundRebondVsWall.play()
+                    ScoreJ1+=1
+                if ball.colliderect(r1):
+                    xball+=10
+                    dx=-dx
+                    angleJ1()
+                    
+            mouvement()
+            pygame.display.flip()
+            resetAnim()
+            clock.tick(fps)
+            
+            
+        while Game4p: # Mode de Jeux 4 joueurs ----------------------------------------------------------------------------------------
+            
+            #music
+            if OnceMusic:
+                Music4J.play()
+                OnceMusic=False
+            if not pygame.mixer.get_busy():
+                OnceMusic=True
+            
+            
+            
+            #Si l'utilisateur quitte, on met les variables 
+			#de boucle à 0 pour n'en parcourir aucune et fermer
+            for event in pygame.event.get():
+                    if event.type == QUIT:  # evènement click sur fermeture de fenêtre
+                        Pong=False
+                        Game2pClassic=False
+                        pygame.quit()
+                        exit()
+                        
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_t]: 
+                if x3>20:
+                    x3 -= 5
+            if pressed[pygame.K_y]:
+                if x3<670:
+                    x3 += 5
+            if pressed[pygame.K_v]: 
+                if x4>20:
+                    x4 -= 5
+            if pressed[pygame.K_b]:
+                if x4<670:
+                    x4 += 5
+            if pressed[pygame.K_UP]: 
+                if y2>20:
+                    y2 -= 3
+            if pressed[pygame.K_DOWN]:
+                if y2<360:
+                    y2 += 3
+            if pressed[pygame.K_a]: 
+                if y1>20:
+                    y1 -= 3
+            if pressed[pygame.K_q]:
+                if y1<360:
+                    y1 += 3
+
+            try:
+                key = listK[pos]
+                player = listP[pos]
+                if player==0:
+                    if key == '0':
+                        if y1 > 20:
+                            y1 -= 30
+                    elif key == '1':
+                        if y1 < 360:
+                            y1 += 30
+                    pos += 1
+                elif player==1:
+                    if key == '0':
+                        if y2 > 20:
+                            y2 -= 30
+                    if  key == '1':
+                        if y2 < 360:
+                            y2 += 30
+                elif player==2:
+                    if key == '0':
+                        if x3 > 20:
+                            x3 -= 30
+                    if key == '1':
+                        if x3 < 670:
+                            x3 += 30
+                elif player==3:
+                    if key == '0':
+                        if x4 > 20:
+                            x4 -= 30
+                    if key == '1':
+                        if x4 < 670:
+                            x4 += 30
+
+            except:
+                pass
+            
+            #reset ecran
+            screen.fill((0, 0, 0))
+            # ajout objet
+            r1=pygame.draw.rect(screen, color1, pygame.Rect(x1, y1, 10, 100))
+            r2=pygame.draw.rect(screen, color2, pygame.Rect(x2, y2, 10, 100))
+            r3=pygame.draw.rect(screen, green , pygame.Rect(x3, y3, 100, 10))
+            r4=pygame.draw.rect(screen, yellow, pygame.Rect(x4, y4, 100, 10))
+            
+            ball=pygame.draw.circle(screen,color3,(xball,yball), 5)
+            S1 = policeGO.render(str(ScoreJ1),True,blue)
+            S2 = policeGO.render(str(ScoreJ2),True,red)
+            S3 = policeGO.render(str(ScoreJ3),True,green)
+            S4 = policeGO.render(str(ScoreJ4),True,yellow)
+            rectTexte1 = S1.get_rect()
+            rectTexte2 = S2.get_rect()
+            rectTexte3 = S3.get_rect()
+            rectTexte4 = S4.get_rect()
+            rectTexte1.x,rectTexte1.y=350,200
+            rectTexte2.x,rectTexte2.y=450,200
+            rectTexte3.x,rectTexte3.y=400,150
+            rectTexte4.x,rectTexte4.y=400,250
+            screen.blit(S1,rectTexte1)
+            screen.blit(S2,rectTexte2)
+            screen.blit(S3,rectTexte3)
+            screen.blit(S4,rectTexte4)
+            
+            
+            
+            
+             #Animation POINT
+            def AnimPj1():
+                global blue,screen
+                screen.fill(blue)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj2():
+                global red,screen
+                screen.fill(red)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj3():
+                global green,screen
+                screen.fill(green)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimPj4():
+                global yellow,screen
+                screen.fill(yellow)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeed():
+                global white,screen
+                screen.fill(white)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def AnimSpeedD():
+                global gray,screen
+                screen.fill(gray)
+                pygame.display.flip()
+                pygame.time.wait(150)
+                
+            def resetAnim():
+                global REZ
+                REZ=True
+                
+                
+                
+            
+                        
+                        
+            #VERIFICATION SCORE
+            def checkScore():
+                global ScoreJ1,ScoreJ2,ScoreJ3,ScoreJ4,dx,dy
+                if ScoreJ1>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ2>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ3>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                if ScoreJ4>=5:
+                    dx=0
+                    dy=0
+                    GO()
+                    
+                    
+           #GAME OVER
+            def GO():
+                global Time,AcceuilGeneral,Game4p,dx,dy,y2,y1,y3,y4,OnceGOMusic,r1,r2,ball
+                if OnceGOMusic:
+                    gameOverSound.play()
+                    OnceGOMusic=False
+                texteGO = policeGO.render("GAME OVER",True,(150,150,150))
+                rectTexte = texteGO.get_rect()
+                rectTexte.x,rectTexte.y=250,350
+                screen.blit(texteGO,rectTexte)
+                print(Time)
+                if Time>=280:
+                    Game4p=False
+                    AcceuilGeneral=True
+                    dx,dy = 0,0   
+                    Music4J.stop()
+                    
+                    
+                else:
+                    Time+=1
+                    Music4J.stop()
+                    if ScoreJ1>=5:
+                        if y2< 450:
+                            y2+=3
+                        if y3< 150:
+                           y3+=3
+                        if y4< 450:
+                            y4+=3
+                    if ScoreJ2>=5:
+                        if y1< 450:
+                            y1+=3
+                        if y3< 150:
+                            y3+=3
+                        if y4< 450:
+                            y4+=3
+                    if ScoreJ3>=5:
+                        if y1< 450:
+                            y1+=3
+                        if y2< 450:
+                            y2+=3
+                        if y4< 450:
+                            y4+=3
+                    if ScoreJ4>=5:
+                        if y1< 450:
+                            y1+=3
+                        if y2< 450:
+                            y2+=3
+                        if y3< 150:
+                            y3+=3
+            
+            # Fonction d'attribution des points
+            def point():
+                global lastTouch,ScoreJ1,ScoreJ2,ScoreJ3,ScoreJ4
+                if lastTouch==1:
+                    ScoreJ1+=1
+                    AnimPj1()
+                if lastTouch==2:
+                    ScoreJ2+=1
+                    AnimPj2()
+                if lastTouch==3:
+                    ScoreJ3+=1
+                    AnimPj3()
+                if lastTouch==4:
+                    ScoreJ4+=1
+                    AnimPj4()
+                
+                    
+            #REACTION ET MVT DE LA BALLE
+            def mouvement():
+                global dx,dy, xball, yball,lastTouch
+                xball+=dx
+                yball+=dy
+                
+                #si touche le mur du haut ou du bas => Point
+                if yball <= 0:
+                    minusOne.play()
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    point()
+                    lastTouch=0
+                    
+                if yball >= 450:
+                    minusOne.play()
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    point()
+                    lastTouch=0
+                    
+                #Si mur de droite ou de gauche => Point 
+                if xball<=0:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    point()
+                    lastTouch=0
+                    
+                if xball>=800:
+                    xball,yball=400,200
+                    dx,dy = 1,3
+                    minusOne.play()
+                    point()
+                    lastTouch=0
+                    
+                    
+                #Si touche raquette
+                if ball.colliderect(r1):
+                    xball+=5
+                    dx=-dx
+                    soundRebondRaquette.play()
+                    AnimSpeed()
+                    lastTouch=1
+                    
+                if ball.colliderect(r2):
+                    xball-=5
+                    dx=-dx
+                    soundRebondRaquette.play()
+                    AnimSpeed()
+                    lastTouch=2
+                    
+                if ball.colliderect(r3):
+                    dy=-dy
+                    yball+=10
+                    soundRebondRaquette.play()
+                    AnimSpeed()
+                    lastTouch=3
+                    
+                if ball.colliderect(r4):
+                    dy=-dy
+                    yball-=10
+                    soundRebondRaquette.play()
+                    AnimSpeed()
+                    lastTouch=4
+                    
+            mouvement()
+            checkScore()
+            pygame.display.flip()
+            clock.tick(fps)

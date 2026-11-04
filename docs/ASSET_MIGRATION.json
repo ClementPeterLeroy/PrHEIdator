@@ -1,0 +1,267 @@
+[
+  {
+    "original": "PrHEIdator_Pong.py",
+    "path": "docs/legacy/PrHEIdator_Pong.py.txt",
+    "sha256": "aba1495411641256c04626646d9834655f18746a5249116dac9ab8542789d323"
+  },
+  {
+    "original": "threadPong.py",
+    "path": "docs/legacy/threadPong.py.txt",
+    "sha256": "89a370798e165b10ed1183e1d935eb41fbd2d5e47904e7a65bc11dfd413e7501"
+  },
+  {
+    "original": "parsing.py",
+    "path": "docs/legacy/parsing.py.txt",
+    "sha256": "76599414aaca54050a2d8c6cefef7213b88e637702fbba90ff34499c8e243892"
+  },
+  {
+    "original": "WRESTLEMANIA.ttf",
+    "path": "px/fonts/legacy/WRESTLEMANIA-root.ttf",
+    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f"
+  },
+  {
+    "original": "src/SoundPackage/Music/2joueurs.wav",
+    "path": "sounds/music/2joueurs.wav",
+    "sha256": "9d8c6581a3780a32b12b23542c0006ba3762be08f7af158d0e69d6a4dcaf936a"
+  },
+  {
+    "original": "src/SoundPackage/Music/4joueurs.wav",
+    "path": "sounds/music/4joueurs.wav",
+    "sha256": "3421bc8b6c9d1c3ef88876202be57e12a2dfececef91a5bca278167851d7a211"
+  },
+  {
+    "original": "src/SoundPackage/Music/generique.mp3",
+    "path": "sounds/music/generique.mp3",
+    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24"
+  },
+  {
+    "original": "src/SoundPackage/Music/Menu.wav",
+    "path": "sounds/music/Menu.wav",
+    "sha256": "b44c0450501b98c54712ee60f9ec429623eaf53485fcfa31a567eca5f105f950"
+  },
+  {
+    "original": "src/SoundPackage/Music/old_generique.wav",
+    "path": "sounds/music/old_generique.wav",
+    "sha256": "39df4315668153744787b01a72bf81657b4ac09a689ddb0d01c2b2d1f6a225c0"
+  },
+  {
+    "original": "src/SoundPackage/Music/PODER.wav",
+    "path": "sounds/music/PODER.wav",
+    "sha256": "c49f5fe6eccce4c89eba24c9383e17cbaf7ea9e94efd6858175a0ce0e55557ca"
+  },
+  {
+    "original": "src/SoundPackage/Music/VsIA.wav",
+    "path": "sounds/music/VsIA.wav",
+    "sha256": "495bc222f2ff1ce37ae5bfbc7f0f73a63f183909e9573e4e0fb3470c540b0b00"
+  },
+  {
+    "original": "src/SoundPackage/Music/VsWall.wav",
+    "path": "sounds/music/VsWall.wav",
+    "sha256": "479736cc94ab09529c141aef9c4b8bc9eb6238863c61b072395bd36b40ec1a5b"
+  },
+  {
+    "original": "src/SoundPackage/Sound/bug.wav",
+    "path": "sounds/effects/bug.wav",
+    "sha256": "7051687a0fbd73352da3902ddd58d417795d7328eac672087d853e0f0c7642b2"
+  },
+  {
+    "original": "src/SoundPackage/Sound/fall.wav",
+    "path": "sounds/effects/fall.wav",
+    "sha256": "f09da184f5a375fccfab4e7229fc40dc8aec46dc054f5bb301a1e86e3c2c6223"
+  },
+  {
+    "original": "src/SoundPackage/Sound/losing.wav",
+    "path": "sounds/effects/losing.wav",
+    "sha256": "01fa604c84ea0a24e7508d1d109537f6c28e3db0d58ab79a76cf60892067eb99"
+  },
+  {
+    "original": "src/SoundPackage/Sound/minusOne.wav",
+    "path": "sounds/effects/minusOne.wav",
+    "sha256": "3a485537ac7232e2a097744562bdd4779aa88e9f4e836165e7986db3687aad67"
+  },
+  {
+    "original": "src/SoundPackage/Sound/nani.wav",
+    "path": "sounds/effects/nani.wav",
+    "sha256": "ee863854309d154f5f741f5a19b1a1b3c4338873bb087edf8fb3a912a596d8bd"
+  },
+  {
+    "original": "src/SoundPackage/Sound/plusOne.wav",
+    "path": "sounds/effects/plusOne.wav",
+    "sha256": "433d39eeb8c0a97c7e8d674885da6abfc6f0c40952b9d2bf235568ff2cac0383"
+  },
+  {
+    "original": "src/SoundPackage/Sound/reboundIA.wav",
+    "path": "sounds/effects/reboundIA.wav",
+    "sha256": "7f282714f06e9d4c479f3462f5c6e5c6ee1e40567acc0438b9ff3176d566c6f0"
+  },
+  {
+    "original": "src/SoundPackage/Sound/reboundJoueur.wav",
+    "path": "sounds/effects/reboundJoueur.wav",
+    "sha256": "7850ad0dcda872f07efbfb8796dbe2780193ec2415a7a188e94748424ad333b3"
+  },
+  {
+    "original": "src/SoundPackage/Sound/reboundJoueur2.wav",
+    "path": "sounds/effects/reboundJoueur2.wav",
+    "sha256": "93b3d0cf28c21c2fdf7376f4b04cfe17047b263e73710c8a805578371ade7452"
+  },
+  {
+    "original": "src/SoundPackage/Sound/reboundVsWall.wav",
+    "path": "sounds/effects/reboundVsWall.wav",
+    "sha256": "2e63d4f1ce54b9cdc5cd4aac75c183146c4f93300b4970cbc40c536d2e3b10d9"
+  },
+  {
+    "original": "src/SoundPackage/Sound/reboundWallH.wav",
+    "path": "sounds/effects/reboundWallH.wav",
+    "sha256": "3657bac0f62b5ccc0842fb22ec515e23c0c30878b76126fb56822198742a6471"
+  },
+  {
+    "original": "src/SoundPackage/Sound/speed.wav",
+    "path": "sounds/effects/speed.wav",
+    "sha256": "ad3c2ccc033f53908067611f0653de04a3e4c467b1c8d76a654e542698335edf"
+  },
+  {
+    "original": "src/SoundPackage/Sound/win.mp3",
+    "path": "sounds/effects/win.mp3",
+    "sha256": "6f434910fb893046cf131051e345f047908cd3799f0cbe15e6878659097017d9"
+  },
+  {
+    "original": "src/SoundPackage/Sound/winA.mp3",
+    "path": "sounds/effects/winA.mp3",
+    "sha256": "c63e9dc3c2c310cba25a4933303051895a09cc1b4fc347048420ddb8120953f0"
+  },
+  {
+    "original": "src/Images/diamond_tribute_Vectors_Market.png",
+    "path": "px/images/diamond_tribute_Vectors_Market.png",
+    "sha256": "2d8b3d02d78e01055fe1216bf6650569307b54fd6656ce2905585fca73a60b19"
+  },
+  {
+    "original": "src/Images/gold_tribute_ultimatearm.png",
+    "path": "px/images/gold_tribute_ultimatearm.png",
+    "sha256": "948fb537350567468c3635904957d551858de26b9eb8189392316a705bfc612d"
+  },
+  {
+    "original": "src/Images/Gtitle.png",
+    "path": "px/images/Gtitle.png",
+    "sha256": "3395b18f3264191ba3a5089e28238340ce92782993bcda838572253a763f1caf"
+  },
+  {
+    "original": "src/Images/images.png",
+    "path": "px/images/images.png",
+    "sha256": "10df62680a1ad877928dd25e6bfd7151b5627b09d566a2c1ab48d2995d8038b2"
+  },
+  {
+    "original": "src/Images/logo.png",
+    "path": "px/images/logo.png",
+    "sha256": "0e0597e9463b33feffc5bf29c248d3def15f8e647b23ad2aac4a98c4c0a39ad9"
+  },
+  {
+    "original": "src/Images/logo_B.jpg",
+    "path": "px/images/logo_B.jpg",
+    "sha256": "f254ce13f10c2f9d84741dc309d9768b8d18cb925d567ed80d8905fec38e3676"
+  },
+  {
+    "original": "src/Images/logo_Bt.jpg",
+    "path": "px/images/logo_Bt.jpg",
+    "sha256": "33d2754d627491ade9e6baa7bfc95e9656aa6dfaf54e7ca32034a4ce2be84804"
+  },
+  {
+    "original": "src/Images/logo_N.jpg",
+    "path": "px/images/logo_N.jpg",
+    "sha256": "4ba028d7a36cad79a78f1387698c499711292f9dad211d2146838429b07f3135"
+  },
+  {
+    "original": "src/Images/logo_Nt.jpg",
+    "path": "px/images/logo_Nt.jpg",
+    "sha256": "af7d04f0143027b23a08026c657f9c43ab601c3bb8ae51bc0dbd3204837e0704"
+  },
+  {
+    "original": "src/Images/logo_RB.png",
+    "path": "px/images/logo_RB.png",
+    "sha256": "61c974b2d218405c39dbd83474243c830ee9e95489b75e27701faa30790d71fe"
+  },
+  {
+    "original": "src/Images/title.png",
+    "path": "px/images/title.png",
+    "sha256": "f69cd3b44c8268c6fa682a5edfa6853ed0a5e1c62ce1baffd7f4f275d0112598"
+  },
+  {
+    "original": "src/font/WRESTLEMANIA.ttf",
+    "path": "px/fonts/WRESTLEMANIA.ttf",
+    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f"
+  },
+  {
+    "original": "Games_files/Sounds/background_synthwave.mp3",
+    "path": "sounds/legacy/background_synthwave.mp3",
+    "sha256": "d3b85f857d451546f6a8b4b7c87f824f65a4683c3448326d5e7be9cbc8974b22"
+  },
+  {
+    "original": "Games_files/Sounds/background_techno_131.mp3",
+    "path": "sounds/legacy/background_techno_131.mp3",
+    "sha256": "989bd4e02209ec40f8634da98f93d290ca4b2f961e728cd1e2b9eba3b8400afc"
+  },
+  {
+    "original": "Games_files/Sounds/end_game.mp3",
+    "path": "sounds/legacy/end_game.mp3",
+    "sha256": "88d1784ca0faf618b227fc389cfc4e4da0976e850098f6e3daeb6c3f7a3d142c"
+  },
+  {
+    "original": "Games_files/Sounds/game_bump.mp3",
+    "path": "sounds/legacy/game_bump.mp3",
+    "sha256": "c89de454c43191d66197d3ef8f5edfbfe856ae18c8b3c9808f54b1bfa9336403"
+  },
+  {
+    "original": "Games_files/Sounds/Loading.mp3",
+    "path": "sounds/legacy/Loading.mp3",
+    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24"
+  },
+  {
+    "original": "Games_files/Sounds/point_scoring.mp3",
+    "path": "sounds/legacy/point_scoring.mp3",
+    "sha256": "953ef910dbadac66445c27da099c28d0c9a9e8f51285cfc5d9e88d83784a54c7"
+  },
+  {
+    "original": "Games_files/Sounds/retired/background_synthwave.flac",
+    "path": "sounds/legacy/retired/background_synthwave.flac",
+    "sha256": "09cf9a4a803a8c1da79f66092f5485e3b154863d33b750fa5ad0189cb4343b19"
+  },
+  {
+    "original": "Games_files/Sounds/retired/background_techno_131.wav",
+    "path": "sounds/legacy/retired/background_techno_131.wav",
+    "sha256": "b7fde07a2b69c4ab5a23fce046477b85eab83e5ccad3a5dd1beb0dfbb54b4c8e"
+  },
+  {
+    "original": "Games_files/Sounds/retired/end_game.wav",
+    "path": "sounds/legacy/retired/end_game.wav",
+    "sha256": "7d4caa71a1978a536278fa9dd7125f42bdf461a254be8637df517a1bf62f1c9f"
+  },
+  {
+    "original": "Games_files/Sounds/retired/point_scoring.wav",
+    "path": "sounds/legacy/retired/point_scoring.wav",
+    "sha256": "817233ebede171b71c9e90d83fdaec58d2684e352e0696fe5afd84936085f386"
+  },
+  {
+    "original": "Games_files/Images/Background_game_1.jpg",
+    "path": "px/legacy/Background_game_1.jpg",
+    "sha256": "713568ca8e652bedf2daeb530cea30dca58b82741bca174ceb6be8584029143c"
+  },
+  {
+    "original": "Games_files/Images/Background_game_2.jpg",
+    "path": "px/legacy/Background_game_2.jpg",
+    "sha256": "e5220ad9b9d984a1cd4d3cce0efe7540e2668c023cb034b8207b32113daa9499"
+  },
+  {
+    "original": "Games_files/Images/Background_game_3.jpg",
+    "path": "px/legacy/Background_game_3.jpg",
+    "sha256": "91c5bcb696cf01de4d5932c8d02a4693b47088b6e1559fd7ad1b19808b70d32a"
+  },
+  {
+    "original": "Games_files/Images/logo_without_background.png",
+    "path": "px/legacy/logo_without_background.png",
+    "sha256": "632d0a8480bd4bd7ca490f2a08c5fbaf10a772ef4f98dcfd6d7779875498ee56"
+  },
+  {
+    "original": "Games_files/Images/logo_with_background.jpg",
+    "path": "px/legacy/logo_with_background.jpg",
+    "sha256": "5ef07bb5ae3d775090115b0c25cd42e0adb6f813b2f206733d2141fcb358b800"
+  }
+]

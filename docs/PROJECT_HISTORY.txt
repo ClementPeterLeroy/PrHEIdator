@@ -1,0 +1,37 @@
+PrHEIdator — project history
+
+Original author credited in the school source: Clement LEROY.
+The name combines Predator and HEI, the school named by the project owner.
+
+The original PrHEIdator_Pong.py header describes these development iterations:
+
+v1: Barebones Pong with a ball, two paddles and a scoreboard.
+v2: Wall mode, menus, introduction and PrHEIdator branding; Flask server and
+    mobile app integration are mentioned in the header.
+v3: Poder mode and sound design.
+v4: Four-player mode.
+v5: Removal of server/mobile integration and an architecture review.
+    The source labels itself v5.0.1, but still contains controller remnants.
+v6: Proposed Keras-based AI. No such implementation was found.
+
+These are source-comment labels, not independently verified public releases.
+The remaining networking scripts demonstrate Flask/Kafka integration, but
+do not establish the availability or historical behavior of a mobile app.
+No original release dates, commit history or additional authorship are inferred.
+
+Modern development restarts at v2.0 — Game Rebirth, a new modernization
+milestone rather than a claim that the historical source was only v1.
+Reliable modern version control is intended to start with this v2.0 baseline;
+the owner will establish that history manually. This task creates no Git
+repository, staging changes, commits, tags, pushes or published releases.
+
+All three Python scripts found at the start of the v2.0 task are archived
+byte-for-byte as text in docs/legacy/. This snapshot includes the asset-path
+fixes made in the preceding troubleshooting session; it is not claimed to
+be an untouched copy of the original school submission. Pong_v1.py appeared
+in earlier IDE context but was absent from disk when this task began.
+
+The historical assets are retained with their existing filenames in the
+modern asset folders. Unknown provenance and unused assets are listed in
+ASSET_REVIEW.md and the migration manifest. Retention does not establish
+permission to redistribute them.

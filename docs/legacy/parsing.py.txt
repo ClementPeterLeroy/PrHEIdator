@@ -1,0 +1,29 @@
+import os
+import re
+
+class Parsing:
+    global path
+    relPath = '\\static\\'
+    pathProj = os.path.abspath(os.path.join(os.path.dirname(__file__), ""))
+    path = pathProj + relPath
+
+    @staticmethod
+    def getUrl(file):
+        global path
+        ptxt = path + file
+        dico = {}
+        with open(ptxt) as file:
+            for line in file:
+                tb = line.replace("\n", "")
+                tb = tb.split(",")
+                dico[tb[0]] = tb[1]
+        return dico
+
+
+    @staticmethod
+    def checkPseudo(pseudo):
+        res = re.match("[A-Za-z0-9]",pseudo)
+        if (res==None):
+            return False
+        else:
+            return True

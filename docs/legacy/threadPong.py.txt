@@ -1,0 +1,125 @@
+import json
+
+from flask import Response, Flask, request
+from kafka import KafkaConsumer
+import threading
+import random as rd
+
+from parsing import Parsing
+
+BOOTSTRAP_SERVERS = ['watcher.monpetitbet.fr:9092']
+
+global nbPlayers
+
+nbPlayers=2
+currentPlayer=0
+LidManette=[]
+Lpseudo=[]
+idSession=rd.randint(100000,1000000)
+listP=[]
+listK=[]
+
+def server_Flask():
+    def run():
+        app = Flask(__name__)
+        global nbPlayers
+        global currentPlayer
+        global LidManette
+        global Lpseudo
+        global idSession
+
+        @app.route('/')
+        def hllo():
+            return Response("Hello !", 200)
+
+        @app.route('/register', methods=['GET'])
+        def register():
+            global currentPlayer
+            global LidManette
+            global idSession
+            if (nbPlayers == currentPlayer):
+                print(f"nbPlayers : {nbPlayers}")
+                print(f"current : {currentPlayer}")
+                return Response("Session Full", 403)
+            else:
+                idManette = request.args.get("idmanette")
+                if (idManette in LidManette):
+                    pos = LidManette.index(idManette)
+                    pseudo = request.args.get("pseudo")
+                    check = Parsing.checkPseudo(pseudo)
+                    if (check == False):
+                        return Response("Invalid Pseudo", 400)
+                    else:
+                        Lpseudo[pos] = pseudo
+                        return Response(str(idSession), 201)
+                else:
+                    pseudo = request.args.get("pseudo")
+                    check = Parsing.checkPseudo(pseudo)
+                    if (check == False):
+                        return Response("Invalid Pseudo", 400)
+                    else:
+                        print("coucou")
+                        Lpseudo.append(pseudo)
+                        LidManette.append(idManette)
+                        print(f"current : {currentPlayer}")
+                        currentPlayer += 1
+                        print(f"nbPlayers : {nbPlayers}")
+                        print(f"current : {currentPlayer}")
+                        return Response(str(idSession), 200)
+        app.run()
+
+    t2 = threading.Thread(target=run)
+    t2.start()
+    print("Flask Started")
+
+def start_consume():
+    def consume():
+        # Initialize consumer Instance
+        global LidManette
+        global idSession
+        global listK
+        global listP
+        topic='keys'
+        consumer = KafkaConsumer(topic, bootstrap_servers=BOOTSTRAP_SERVERS)
+
+        print("About to start polling for topic:", topic)
+        consumer.poll(timeout_ms=1000)
+        print("Started Polling for topic:", topic)
+        for msg in consumer:
+            x = msg.value
+            J = json.loads(x.decode("utf-8").replace("'", '"'))
+            print(f"idmanette : {J['idmanette']}")
+            print(f"idsession : {J['idsession']}")
+            print(f"idManette registered : {LidManette}")
+            print(f"Current id session is : {idSession}")
+            print(f"key : {J['key']}")
+            if J["idmanette"] in LidManette:
+                print('Je suis dans la 1ere boucle')
+                if J["idsession"] == str(idSession):
+                    pos = LidManette.index(J["idmanette"])
+                    print('Je suis dans la 2nd boucle')
+                    listK.append(J["key"])
+                    listP.append(pos)
+                else:
+                    print(type(idSession))
+                    print(type(J['idsession']))
+
+    t1 = threading.Thread(target=consume)
+    t1.start()
+    print("t1 Started")
+
+def reboot():
+    global Lpseudo
+    global currentPlayer
+    global nbPlayers
+    global LidManette
+    Lpseudo = Lpseudo[:1]
+    currentPlayer = 0
+    nbPlayers = 1
+    if len(LidManette) > 1:
+        LidManette = LidManette[:1]
+
+
+def setNbPlayers(x):
+    global nbPlayers
+    nbPlayers=x
