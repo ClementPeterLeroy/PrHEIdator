@@ -1,7 +1,7 @@
 """Local mode rules, score ownership and Poder special attacks."""
 
 from enum import Enum
-from math import erf, sqrt
+from math import ceil, erf, sqrt
 import random
 
 import pygame
@@ -9,14 +9,16 @@ import pygame
 from .collisions import bounce_paddle, bounce_walls, exit_side
 from .config import AI_SPEED, HEIGHT, HORIZONTAL_SPEED, PADDLE_SPEED, WIDTH, WINNING_SCORE
 from .entities import Ball, Paddle
+from .powerups import PowerUps
 
 
 class Mode(Enum):
-    AI = "Ia"
-    WALL = "Wall"
-    CLASSIC = "Classic"
-    PODER = "Poder"
-    FOUR = "4 joueurs Classic"
+    AI = "VS COMPUTER"
+    WALL = "VS WALL"
+    CLASSIC = "CLASSIC"
+    PODER = "PODER"
+    FUN = "FUN"
+    FOUR = "FREE-FOR-ALL"
 
 
 class Match:
@@ -37,6 +39,9 @@ class Match:
         self.finished = False
         self.winner = None
         self.ai_detection = 0.9
+        self.serving_player = 0
+        self.powerups = PowerUps(self.rng) if self.mode == Mode.FUN else None
+        self.play_time = 0
 
     def move_players(self, directions, dt):
         for paddle in self.paddles:
@@ -80,8 +85,25 @@ class Match:
             self.winner = player
 
     def step(self, dt, directions=None, attacks=()):
+        """Substep fast shots so each collision advances by at most 4 pixels."""
         if self.finished:
             return []
+        dt = max(0, dt)
+        # Budget for a Hyperball collected midway through this fixed step.
+        speed = max(abs(self.ball.velocity.x), abs(self.ball.velocity.y),
+                    1500 if self.mode == Mode.FUN else 1000)
+        count = max(1, ceil(speed * dt / 4))
+        events = []
+        for _ in range(count):
+            events.extend(self._step(dt / count, directions, attacks))
+            if self.finished or any(name in ("point", "miss") for name, _ in events):
+                break
+        return events
+
+    def _step(self, dt, directions=None, attacks=()):
+        if self.finished:
+            return []
+        self.play_time += dt
         self.move_players(directions or {}, dt)
         events = []
         for player in attacks:
@@ -98,6 +120,8 @@ class Match:
                     paddle.charge = min(2, paddle.charge + 1)
                 if self.mode == Mode.AI and paddle.player == 1:
                     self.ai_detection = self._next_ai_detection()
+                if self.powerups:
+                    self.powerups.on_return(self, paddle.player)
                 events.append(("paddle" if zone in ("center", "plain") else "speed", paddle.player))
 
         side = exit_side(self.ball)
@@ -120,10 +144,19 @@ class Match:
                 self.last_touch = None
                 self.ball.reset()
         elif side in ("left", "right"):
+            if self.powerups:
+                saved = self.powerups.save(self, side)
+                if saved is not None:
+                    return events + [("shield", saved)]
+                self.powerups.clear(self)
             scorer = 1 if side == "left" else 0
             self._award(scorer)
             if self.mode == Mode.PODER:
                 self.paddles[1 - scorer].charge = 0
             events.append(("point", scorer))
             self.ball.reset()
+            self.serving_player = 0  # Original reset always serves toward the right.
+            self.last_touch = None
+        elif self.powerups:
+            events.extend(self.powerups.update(self, dt))
         return events

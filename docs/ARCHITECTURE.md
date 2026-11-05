@@ -1,81 +1,107 @@
-# Architecture
+# Predator v2.1 ? Arcade Renaissance: architecture
 
-`main.py` calls `src.app.main()`. Importing modules does not open a window,
-initialize audio, contact a service or start a game. The main function creates
-the application, runs it and closes Pygame in `finally`, including after an
-initialization or runtime failure.
+The minimal main.py calls src.app.main(). Imports do not initialize a display
+or connect to a service. main() owns predictable cleanup in a finally block,
+including initialization/runtime failures. Pygame is the sole external dependency.
 
 ## Responsibilities
 
 | Module | Responsibility |
 | --- | --- |
-| config | Project root, dimensions, timing, colours and keyboard constants |
-| entities | Floating-point ball position/velocity and clamped paddle movement |
-| collisions | Direction-aware paddle and top/bottom collision responses |
-| modes | Match ownership, reactive AI, mode-specific exits/scoring and Poder |
-| navigation | Explicit screen enum, menu contents, keyboard/mouse selection |
-| assets | Project-relative resource manifest and cached images/fonts |
-| audio | Streamed music, loaded effects, mute and shutdown |
-| rendering | Drawing original assets, scores, paddles, flashes and game over |
-| app | Event dispatch, state transitions, simulation timing and lifecycle |
+| app | Lifecycle transitions, one event loop, fixed-step scheduling, window scaling |
+| config | Logical dimensions, timing, palette and actual control bindings |
+| entities | Ball/paddle state and reversible paddle resizing |
+| collisions | Direction-aware reflection, separation and paddle zones |
+| modes | Six mode identifiers, match state, tracking bot, scoring and Poder |
+| powerups | Seeded Fun spawning, ownership, temporary transformations and expiry |
+| navigation | Explicit screen enum, shared button hitboxes, edge-triggered input |
+| ui/buttons | Button geometry and common selected/hover/pressed rendering |
+| ui/menus | Mode explanations and controls derived from configuration |
+| ui/overlays | Shared translucent countdown/pause/result panels |
+| rendering | Cached backdrop/text, branding, briefings, arenas and feedback |
+| assets | One project-relative runtime resource manifest and caches |
+| audio | One music stream, cached/aliased effects, volume, pause and cleanup |
+| settings | Validated JSON preferences, atomic save and graceful save failure |
 
-## One central loop
+The small ui/ package separates presentation from navigation without a widget
+framework. Settings has its own module because filesystem persistence is
+independent of game configuration. No empty proposed modules were added.
 
-Every rendered frame:
+## Screens and transitions
 
-1. Read elapsed time from the Pygame clock, limited to 100 ms to avoid an
-   unbounded catch-up after a stalled window.
-2. Consume every queued event exactly once. Handle quit, menu selection,
-   back/skip and mute. Menu input comes from events, never a stale event variable.
-3. Update the active screen's timer. During gameplay, sample held movement and
-   attack keys and advance a fixed 10 ms simulation accumulator.
-4. Each simulation step moves the paddles and reactive AI, evaluates held Poder
-   attacks, moves the ball, resolves boundaries/paddles and applies mode rules.
-5. Consume simulation events as sound effects and colour flashes. A flash
-   pauses simulation for the original 150 ms while frame/event processing
-   continues. Match completion transitions to GAME_OVER once.
-6. Draw the active screen and flip the display.
+INTRO ? MAIN ? SOLO / VERSUS / FREE-FOR-ALL / OPTIONS / CREDITS.
+Selecting any Mode stores pending_mode and opens PRE_MATCH, without simulating
+or creating transient effects. PLAY creates a new Match and opens COUNTDOWN.
+After three seconds COUNTDOWN transitions to PLAYING. Back from PRE_MATCH
+returns to the branch the mode belongs to.
 
-Intro, menus, gameplay and game over use this same loop. There are no blocking
-animation loops, delayed waits, worker threads or network services. The clock
-limits rendering to 100 FPS. Simulation positions retain subpixel precision;
-Pygame rectangles are rounded collision/rendering bounds.
+PLAYING or COUNTDOWN ? PAUSED on Esc/focus loss. RESUME/Esc restores the exact
+previous screen and countdown time. RESTART creates a fresh Match/countdown;
+MAIN MENU drops all transient state. A finished match enters GAME_OVER once.
+That results screen waits for PLAY AGAIN or MAIN MENU rather than timing out.
 
-## State and ownership
+A Match owns its ball, paddles, scores, RNG, play time, last-touch/serve ownership
+and optional Fun controller. It does not load files, play sounds or draw.
+Selecting a mode is distinct from starting a match; rendering/input share
+explicit state rather than overloading one gameplay flag.
 
-`Navigation` owns one `Screen` and the selected menu index. `Application`
-owns a `Match` only while playing or showing game over. Selecting a mode
-creates a fresh match, resetting scores, charge, ball, paddles and last touch.
-Leaving a match drops it. Entering GAME_OVER stops music, plays the losing
-effect once, freezes simulation and starts a 2.8-second return timer.
+## One central loop and simulation
 
-`Match` owns its ball, paddles, scores, RNG and rules. It returns small
-`(event_name, player)` tuples and never plays sound or draws. `Mode` contains
-only the five implemented modes; Fun and DeepIA have no selectable target.
-The reactive AI uses an injectable RNG for deterministic verification.
+Each frame polls all queued events once, dispatches lifecycle/navigation,
+updates the active screen and draws one logical frame. Menu activation uses
+KEYDOWN edges or matching mouse press/release, and ignores key repeats.
+No nested animation loops or blocking waits are used.
 
-The school game's presentation is drawn by `Renderer`. Game-over paddle
-falling is visual only and does not mutate the stopped match. The old
-inconsistent ball/paddle draw-before-move ordering is replaced with drawing
-the current simulation state.
+The original gameplay coordinate space remains 800?450. Rendering is limited
+to 100 FPS; a 10 ms fixed-step accumulator advances gameplay. Frame input above
+100 ms is discarded to bound stall catch-up. Collision processing further
+substeps ball movement to at most four pixels per slice for in-game speed
+ranges, budgeting for Hyperball collection midway through a step. A point ends
+that simulation step so an old trajectory cannot score twice. Paddle float
+positions avoid losing movement precision during substeps.
 
-## Resources and dependencies
+Pause never calls Match.step(), advances an effect or consumes spawn time.
+The simulation accumulator is cleared on pause/resume. Rendering/menu easing
+may continue while match state stays frozen. Countdown similarly advances only
+its own screen timer. Results freeze match state until a deliberate action.
 
-`PROJECT_ROOT` comes from the config module's location. All active resources
-are declared in assets.py and resolved against that root. Images and fonts
-are cached at startup. Effects are loaded once; music uses Pygame's streaming
-channel and changes on state transitions. Effects cannot accidentally restart
-menu music through a global mixer-busy test.
+Simulation returns small (event_name, player) tuples for audio/visual feedback.
+Feedback has a bounded history, is nonblocking and uses local outlines/labels
+rather than full-screen flashes. Reduced-flash preferences suppress decorative
+motion/trails and transient feedback, preserving necessary effect indicators.
 
-Pygame is the only third-party dependency. Python's math.erf replaces the
-AI integral; plain tuples replace NumPy's colour array. Audio initialization
-failure permits a silent game. Missing/corrupt active files still raise an
-error. Archived source is text and is never imported.
+## Fun state
 
-## Verification
+A PowerUps controller exists only for FUN. It owns one Pickup or one Effect,
+never a stack. Its seeded RNG supplies a fresh 6?12 second interval and safe
+centre-arena placement. Collection uses the ball rectangle and last hitter;
+serving_player supplies ownership before first contact.
 
-Tests isolate entities, collisions and rules, then use real Pygame with dummy
-SDL drivers to exercise application state transitions, input, every mode's
-game-over path, resource decoding and lifecycle cleanup. A subprocess runs
-the real entry point from docs/ with socket connection methods blocked.
-See VALIDATION.md for observed results and testing limits.
+Transformations use reversible scale factors or centre-preserving paddle
+resizes. Non-Shield effects expire after the opposing paddle's valid return.
+Shield instead intercepts the protected player's goal before score assignment,
+consumes itself and sends the ball back into the court. Rally end clears all
+pickups/effects before the standard reset. Straight Shot restores a nonzero
+vertical component on expiry. Phantom modifies rendering only, with a 0.6 s
+warning and continuing collision detection. Lightning is a retained image,
+not an enum member or random choice. See FUN_RULES.md for exact rules.
+
+## Display and resources
+
+A logical surface is scaled to the largest 16:9 viewport inside the real window.
+Black bars fill unused space. Mouse events are inverse-mapped through that same
+viewport; clicks in letterboxes miss all widgets. Both mouse hitboxes and button
+rendering use ui.buttons.button_rects(). Resizing and fullscreen update the
+window without changing physics coordinates or the match.
+
+All runtime files live under assets/. Images, supplied icons and fonts load
+once; fonts use Pygame's bundled default for clean interface typography.
+Original font files remain preserved. The gradient/grid backdrop and rendered
+text are cached; text caching is bounded to 256 entries. Music streams on one
+channel while aliased sound events reuse decoded Sound instances. Transitions
+stop inappropriate effects/music; pause/resume use the mixer pause controls.
+
+Settings are saved only when changed. Values/types are validated; invalid JSON
+loads defaults. Atomic replacement reduces partial saves. A write failure keeps
+the session functional and is reported inside Options, without blocking play.
+Tests inject Settings and disable persistence to avoid modifying user choices.

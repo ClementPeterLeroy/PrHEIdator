@@ -18,3 +18,7 @@ Thumbs.db
 .env
 .env.*
 .diagnostics/
+build/
+dist/
+*.egg-info/
+settings.json

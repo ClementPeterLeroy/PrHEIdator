@@ -1,1 +1,1 @@
-"""PrHEIdator v2.0 — Game Rebirth."""
+"""Predator v2.1 — Arcade Renaissance, formerly PrHEIdator."""

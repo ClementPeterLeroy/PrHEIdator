@@ -47,3 +47,11 @@ class Paddle:
             self.rect.x = round(self.position)
         else:
             self.rect.y = round(self.position)
+
+    def resize(self, height):
+        """Change a vertical paddle around its centre, then clamp to the field."""
+        center = self.rect.centery
+        self.rect.height = height
+        self.rect.centery = center
+        self.position = float(max(0, min(HEIGHT - height, self.rect.y)))
+        self.rect.y = round(self.position)

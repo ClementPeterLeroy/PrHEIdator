@@ -16,252 +16,344 @@
   },
   {
     "original": "WRESTLEMANIA.ttf",
-    "path": "px/fonts/legacy/WRESTLEMANIA-root.ttf",
-    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f"
+    "path": "assets/px/fonts/legacy/WRESTLEMANIA-root.ttf",
+    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f",
+    "previous_path": "px/fonts/legacy/WRESTLEMANIA-root.ttf"
   },
   {
     "original": "src/SoundPackage/Music/2joueurs.wav",
-    "path": "sounds/music/2joueurs.wav",
-    "sha256": "9d8c6581a3780a32b12b23542c0006ba3762be08f7af158d0e69d6a4dcaf936a"
+    "path": "assets/snd/music/2joueurs.wav",
+    "sha256": "9d8c6581a3780a32b12b23542c0006ba3762be08f7af158d0e69d6a4dcaf936a",
+    "previous_path": "sounds/music/2joueurs.wav"
   },
   {
     "original": "src/SoundPackage/Music/4joueurs.wav",
-    "path": "sounds/music/4joueurs.wav",
-    "sha256": "3421bc8b6c9d1c3ef88876202be57e12a2dfececef91a5bca278167851d7a211"
+    "path": "assets/snd/music/4joueurs.wav",
+    "sha256": "3421bc8b6c9d1c3ef88876202be57e12a2dfececef91a5bca278167851d7a211",
+    "previous_path": "sounds/music/4joueurs.wav"
   },
   {
     "original": "src/SoundPackage/Music/generique.mp3",
-    "path": "sounds/music/generique.mp3",
-    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24"
+    "path": "assets/snd/music/generique.mp3",
+    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24",
+    "previous_path": "sounds/music/generique.mp3"
   },
   {
     "original": "src/SoundPackage/Music/Menu.wav",
-    "path": "sounds/music/Menu.wav",
-    "sha256": "b44c0450501b98c54712ee60f9ec429623eaf53485fcfa31a567eca5f105f950"
+    "path": "assets/snd/music/Menu.wav",
+    "sha256": "b44c0450501b98c54712ee60f9ec429623eaf53485fcfa31a567eca5f105f950",
+    "previous_path": "sounds/music/Menu.wav"
   },
   {
     "original": "src/SoundPackage/Music/old_generique.wav",
-    "path": "sounds/music/old_generique.wav",
-    "sha256": "39df4315668153744787b01a72bf81657b4ac09a689ddb0d01c2b2d1f6a225c0"
+    "path": "assets/snd/music/old_generique.wav",
+    "sha256": "39df4315668153744787b01a72bf81657b4ac09a689ddb0d01c2b2d1f6a225c0",
+    "previous_path": "sounds/music/old_generique.wav"
   },
   {
     "original": "src/SoundPackage/Music/PODER.wav",
-    "path": "sounds/music/PODER.wav",
-    "sha256": "c49f5fe6eccce4c89eba24c9383e17cbaf7ea9e94efd6858175a0ce0e55557ca"
+    "path": "assets/snd/music/PODER.wav",
+    "sha256": "c49f5fe6eccce4c89eba24c9383e17cbaf7ea9e94efd6858175a0ce0e55557ca",
+    "previous_path": "sounds/music/PODER.wav"
   },
   {
     "original": "src/SoundPackage/Music/VsIA.wav",
-    "path": "sounds/music/VsIA.wav",
-    "sha256": "495bc222f2ff1ce37ae5bfbc7f0f73a63f183909e9573e4e0fb3470c540b0b00"
+    "path": "assets/snd/music/VsIA.wav",
+    "sha256": "495bc222f2ff1ce37ae5bfbc7f0f73a63f183909e9573e4e0fb3470c540b0b00",
+    "previous_path": "sounds/music/VsIA.wav"
   },
   {
     "original": "src/SoundPackage/Music/VsWall.wav",
-    "path": "sounds/music/VsWall.wav",
-    "sha256": "479736cc94ab09529c141aef9c4b8bc9eb6238863c61b072395bd36b40ec1a5b"
+    "path": "assets/snd/music/VsWall.wav",
+    "sha256": "479736cc94ab09529c141aef9c4b8bc9eb6238863c61b072395bd36b40ec1a5b",
+    "previous_path": "sounds/music/VsWall.wav"
   },
   {
     "original": "src/SoundPackage/Sound/bug.wav",
-    "path": "sounds/effects/bug.wav",
-    "sha256": "7051687a0fbd73352da3902ddd58d417795d7328eac672087d853e0f0c7642b2"
+    "path": "assets/snd/sfx/bug.wav",
+    "sha256": "7051687a0fbd73352da3902ddd58d417795d7328eac672087d853e0f0c7642b2",
+    "previous_path": "sounds/effects/bug.wav"
   },
   {
     "original": "src/SoundPackage/Sound/fall.wav",
-    "path": "sounds/effects/fall.wav",
-    "sha256": "f09da184f5a375fccfab4e7229fc40dc8aec46dc054f5bb301a1e86e3c2c6223"
+    "path": "assets/snd/sfx/fall.wav",
+    "sha256": "f09da184f5a375fccfab4e7229fc40dc8aec46dc054f5bb301a1e86e3c2c6223",
+    "previous_path": "sounds/effects/fall.wav"
   },
   {
     "original": "src/SoundPackage/Sound/losing.wav",
-    "path": "sounds/effects/losing.wav",
-    "sha256": "01fa604c84ea0a24e7508d1d109537f6c28e3db0d58ab79a76cf60892067eb99"
+    "path": "assets/snd/sfx/losing.wav",
+    "sha256": "01fa604c84ea0a24e7508d1d109537f6c28e3db0d58ab79a76cf60892067eb99",
+    "previous_path": "sounds/effects/losing.wav"
   },
   {
     "original": "src/SoundPackage/Sound/minusOne.wav",
-    "path": "sounds/effects/minusOne.wav",
-    "sha256": "3a485537ac7232e2a097744562bdd4779aa88e9f4e836165e7986db3687aad67"
+    "path": "assets/snd/sfx/minusOne.wav",
+    "sha256": "3a485537ac7232e2a097744562bdd4779aa88e9f4e836165e7986db3687aad67",
+    "previous_path": "sounds/effects/minusOne.wav"
   },
   {
     "original": "src/SoundPackage/Sound/nani.wav",
-    "path": "sounds/effects/nani.wav",
-    "sha256": "ee863854309d154f5f741f5a19b1a1b3c4338873bb087edf8fb3a912a596d8bd"
+    "path": "assets/snd/sfx/nani.wav",
+    "sha256": "ee863854309d154f5f741f5a19b1a1b3c4338873bb087edf8fb3a912a596d8bd",
+    "previous_path": "sounds/effects/nani.wav"
   },
   {
     "original": "src/SoundPackage/Sound/plusOne.wav",
-    "path": "sounds/effects/plusOne.wav",
-    "sha256": "433d39eeb8c0a97c7e8d674885da6abfc6f0c40952b9d2bf235568ff2cac0383"
+    "path": "assets/snd/sfx/plusOne.wav",
+    "sha256": "433d39eeb8c0a97c7e8d674885da6abfc6f0c40952b9d2bf235568ff2cac0383",
+    "previous_path": "sounds/effects/plusOne.wav"
   },
   {
     "original": "src/SoundPackage/Sound/reboundIA.wav",
-    "path": "sounds/effects/reboundIA.wav",
-    "sha256": "7f282714f06e9d4c479f3462f5c6e5c6ee1e40567acc0438b9ff3176d566c6f0"
+    "path": "assets/snd/sfx/reboundIA.wav",
+    "sha256": "7f282714f06e9d4c479f3462f5c6e5c6ee1e40567acc0438b9ff3176d566c6f0",
+    "previous_path": "sounds/effects/reboundIA.wav"
   },
   {
     "original": "src/SoundPackage/Sound/reboundJoueur.wav",
-    "path": "sounds/effects/reboundJoueur.wav",
-    "sha256": "7850ad0dcda872f07efbfb8796dbe2780193ec2415a7a188e94748424ad333b3"
+    "path": "assets/snd/sfx/reboundJoueur.wav",
+    "sha256": "7850ad0dcda872f07efbfb8796dbe2780193ec2415a7a188e94748424ad333b3",
+    "previous_path": "sounds/effects/reboundJoueur.wav"
   },
   {
     "original": "src/SoundPackage/Sound/reboundJoueur2.wav",
-    "path": "sounds/effects/reboundJoueur2.wav",
-    "sha256": "93b3d0cf28c21c2fdf7376f4b04cfe17047b263e73710c8a805578371ade7452"
+    "path": "assets/snd/sfx/reboundJoueur2.wav",
+    "sha256": "93b3d0cf28c21c2fdf7376f4b04cfe17047b263e73710c8a805578371ade7452",
+    "previous_path": "sounds/effects/reboundJoueur2.wav"
   },
   {
     "original": "src/SoundPackage/Sound/reboundVsWall.wav",
-    "path": "sounds/effects/reboundVsWall.wav",
-    "sha256": "2e63d4f1ce54b9cdc5cd4aac75c183146c4f93300b4970cbc40c536d2e3b10d9"
+    "path": "assets/snd/sfx/reboundVsWall.wav",
+    "sha256": "2e63d4f1ce54b9cdc5cd4aac75c183146c4f93300b4970cbc40c536d2e3b10d9",
+    "previous_path": "sounds/effects/reboundVsWall.wav"
   },
   {
     "original": "src/SoundPackage/Sound/reboundWallH.wav",
-    "path": "sounds/effects/reboundWallH.wav",
-    "sha256": "3657bac0f62b5ccc0842fb22ec515e23c0c30878b76126fb56822198742a6471"
+    "path": "assets/snd/sfx/reboundWallH.wav",
+    "sha256": "3657bac0f62b5ccc0842fb22ec515e23c0c30878b76126fb56822198742a6471",
+    "previous_path": "sounds/effects/reboundWallH.wav"
   },
   {
     "original": "src/SoundPackage/Sound/speed.wav",
-    "path": "sounds/effects/speed.wav",
-    "sha256": "ad3c2ccc033f53908067611f0653de04a3e4c467b1c8d76a654e542698335edf"
+    "path": "assets/snd/sfx/speed.wav",
+    "sha256": "ad3c2ccc033f53908067611f0653de04a3e4c467b1c8d76a654e542698335edf",
+    "previous_path": "sounds/effects/speed.wav"
   },
   {
     "original": "src/SoundPackage/Sound/win.mp3",
-    "path": "sounds/effects/win.mp3",
-    "sha256": "6f434910fb893046cf131051e345f047908cd3799f0cbe15e6878659097017d9"
+    "path": "assets/snd/sfx/win.mp3",
+    "sha256": "6f434910fb893046cf131051e345f047908cd3799f0cbe15e6878659097017d9",
+    "previous_path": "sounds/effects/win.mp3"
   },
   {
     "original": "src/SoundPackage/Sound/winA.mp3",
-    "path": "sounds/effects/winA.mp3",
-    "sha256": "c63e9dc3c2c310cba25a4933303051895a09cc1b4fc347048420ddb8120953f0"
+    "path": "assets/snd/sfx/winA.mp3",
+    "sha256": "c63e9dc3c2c310cba25a4933303051895a09cc1b4fc347048420ddb8120953f0",
+    "previous_path": "sounds/effects/winA.mp3"
   },
   {
     "original": "src/Images/diamond_tribute_Vectors_Market.png",
-    "path": "px/images/diamond_tribute_Vectors_Market.png",
-    "sha256": "2d8b3d02d78e01055fe1216bf6650569307b54fd6656ce2905585fca73a60b19"
+    "path": "assets/px/legacy/images/diamond_tribute_Vectors_Market.png",
+    "sha256": "2d8b3d02d78e01055fe1216bf6650569307b54fd6656ce2905585fca73a60b19",
+    "previous_path": "px/images/diamond_tribute_Vectors_Market.png"
   },
   {
     "original": "src/Images/gold_tribute_ultimatearm.png",
-    "path": "px/images/gold_tribute_ultimatearm.png",
-    "sha256": "948fb537350567468c3635904957d551858de26b9eb8189392316a705bfc612d"
+    "path": "assets/px/legacy/images/gold_tribute_ultimatearm.png",
+    "sha256": "948fb537350567468c3635904957d551858de26b9eb8189392316a705bfc612d",
+    "previous_path": "px/images/gold_tribute_ultimatearm.png"
   },
   {
     "original": "src/Images/Gtitle.png",
-    "path": "px/images/Gtitle.png",
-    "sha256": "3395b18f3264191ba3a5089e28238340ce92782993bcda838572253a763f1caf"
+    "path": "assets/px/branding/Gtitle.png",
+    "sha256": "3395b18f3264191ba3a5089e28238340ce92782993bcda838572253a763f1caf",
+    "previous_path": "px/images/Gtitle.png"
   },
   {
     "original": "src/Images/images.png",
-    "path": "px/images/images.png",
-    "sha256": "10df62680a1ad877928dd25e6bfd7151b5627b09d566a2c1ab48d2995d8038b2"
+    "path": "assets/px/legacy/images/images.png",
+    "sha256": "10df62680a1ad877928dd25e6bfd7151b5627b09d566a2c1ab48d2995d8038b2",
+    "previous_path": "px/images/images.png"
   },
   {
     "original": "src/Images/logo.png",
-    "path": "px/images/logo.png",
-    "sha256": "0e0597e9463b33feffc5bf29c248d3def15f8e647b23ad2aac4a98c4c0a39ad9"
+    "path": "assets/px/branding/logo.png",
+    "sha256": "0e0597e9463b33feffc5bf29c248d3def15f8e647b23ad2aac4a98c4c0a39ad9",
+    "previous_path": "px/images/logo.png"
   },
   {
     "original": "src/Images/logo_B.jpg",
-    "path": "px/images/logo_B.jpg",
-    "sha256": "f254ce13f10c2f9d84741dc309d9768b8d18cb925d567ed80d8905fec38e3676"
+    "path": "assets/px/legacy/images/logo_B.jpg",
+    "sha256": "f254ce13f10c2f9d84741dc309d9768b8d18cb925d567ed80d8905fec38e3676",
+    "previous_path": "px/images/logo_B.jpg"
   },
   {
     "original": "src/Images/logo_Bt.jpg",
-    "path": "px/images/logo_Bt.jpg",
-    "sha256": "33d2754d627491ade9e6baa7bfc95e9656aa6dfaf54e7ca32034a4ce2be84804"
+    "path": "assets/px/legacy/images/logo_Bt.jpg",
+    "sha256": "33d2754d627491ade9e6baa7bfc95e9656aa6dfaf54e7ca32034a4ce2be84804",
+    "previous_path": "px/images/logo_Bt.jpg"
   },
   {
     "original": "src/Images/logo_N.jpg",
-    "path": "px/images/logo_N.jpg",
-    "sha256": "4ba028d7a36cad79a78f1387698c499711292f9dad211d2146838429b07f3135"
+    "path": "assets/px/legacy/images/logo_N.jpg",
+    "sha256": "4ba028d7a36cad79a78f1387698c499711292f9dad211d2146838429b07f3135",
+    "previous_path": "px/images/logo_N.jpg"
   },
   {
     "original": "src/Images/logo_Nt.jpg",
-    "path": "px/images/logo_Nt.jpg",
-    "sha256": "af7d04f0143027b23a08026c657f9c43ab601c3bb8ae51bc0dbd3204837e0704"
+    "path": "assets/px/legacy/images/logo_Nt.jpg",
+    "sha256": "af7d04f0143027b23a08026c657f9c43ab601c3bb8ae51bc0dbd3204837e0704",
+    "previous_path": "px/images/logo_Nt.jpg"
   },
   {
     "original": "src/Images/logo_RB.png",
-    "path": "px/images/logo_RB.png",
-    "sha256": "61c974b2d218405c39dbd83474243c830ee9e95489b75e27701faa30790d71fe"
+    "path": "assets/px/legacy/images/logo_RB.png",
+    "sha256": "61c974b2d218405c39dbd83474243c830ee9e95489b75e27701faa30790d71fe",
+    "previous_path": "px/images/logo_RB.png"
   },
   {
     "original": "src/Images/title.png",
-    "path": "px/images/title.png",
-    "sha256": "f69cd3b44c8268c6fa682a5edfa6853ed0a5e1c62ce1baffd7f4f275d0112598"
+    "path": "assets/px/branding/title.png",
+    "sha256": "f69cd3b44c8268c6fa682a5edfa6853ed0a5e1c62ce1baffd7f4f275d0112598",
+    "previous_path": "px/images/title.png"
   },
   {
     "original": "src/font/WRESTLEMANIA.ttf",
-    "path": "px/fonts/WRESTLEMANIA.ttf",
-    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f"
+    "path": "assets/px/fonts/WRESTLEMANIA.ttf",
+    "sha256": "73e594387c693c9d6654492ba0b83da7d6e7b961b6b7508d5e78d4e55cb3745f",
+    "previous_path": "px/fonts/WRESTLEMANIA.ttf"
   },
   {
     "original": "Games_files/Sounds/background_synthwave.mp3",
-    "path": "sounds/legacy/background_synthwave.mp3",
-    "sha256": "d3b85f857d451546f6a8b4b7c87f824f65a4683c3448326d5e7be9cbc8974b22"
+    "path": "assets/snd/legacy/background_synthwave.mp3",
+    "sha256": "d3b85f857d451546f6a8b4b7c87f824f65a4683c3448326d5e7be9cbc8974b22",
+    "previous_path": "sounds/legacy/background_synthwave.mp3"
   },
   {
     "original": "Games_files/Sounds/background_techno_131.mp3",
-    "path": "sounds/legacy/background_techno_131.mp3",
-    "sha256": "989bd4e02209ec40f8634da98f93d290ca4b2f961e728cd1e2b9eba3b8400afc"
+    "path": "assets/snd/legacy/background_techno_131.mp3",
+    "sha256": "989bd4e02209ec40f8634da98f93d290ca4b2f961e728cd1e2b9eba3b8400afc",
+    "previous_path": "sounds/legacy/background_techno_131.mp3"
   },
   {
     "original": "Games_files/Sounds/end_game.mp3",
-    "path": "sounds/legacy/end_game.mp3",
-    "sha256": "88d1784ca0faf618b227fc389cfc4e4da0976e850098f6e3daeb6c3f7a3d142c"
+    "path": "assets/snd/legacy/end_game.mp3",
+    "sha256": "88d1784ca0faf618b227fc389cfc4e4da0976e850098f6e3daeb6c3f7a3d142c",
+    "previous_path": "sounds/legacy/end_game.mp3"
   },
   {
     "original": "Games_files/Sounds/game_bump.mp3",
-    "path": "sounds/legacy/game_bump.mp3",
-    "sha256": "c89de454c43191d66197d3ef8f5edfbfe856ae18c8b3c9808f54b1bfa9336403"
+    "path": "assets/snd/legacy/game_bump.mp3",
+    "sha256": "c89de454c43191d66197d3ef8f5edfbfe856ae18c8b3c9808f54b1bfa9336403",
+    "previous_path": "sounds/legacy/game_bump.mp3"
   },
   {
     "original": "Games_files/Sounds/Loading.mp3",
-    "path": "sounds/legacy/Loading.mp3",
-    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24"
+    "path": "assets/snd/legacy/Loading.mp3",
+    "sha256": "7691fc903d0ce3075ced8797de612009f9748434e5e01bd626a5beb99345bb24",
+    "previous_path": "sounds/legacy/Loading.mp3"
   },
   {
     "original": "Games_files/Sounds/point_scoring.mp3",
-    "path": "sounds/legacy/point_scoring.mp3",
-    "sha256": "953ef910dbadac66445c27da099c28d0c9a9e8f51285cfc5d9e88d83784a54c7"
+    "path": "assets/snd/legacy/point_scoring.mp3",
+    "sha256": "953ef910dbadac66445c27da099c28d0c9a9e8f51285cfc5d9e88d83784a54c7",
+    "previous_path": "sounds/legacy/point_scoring.mp3"
   },
   {
     "original": "Games_files/Sounds/retired/background_synthwave.flac",
-    "path": "sounds/legacy/retired/background_synthwave.flac",
-    "sha256": "09cf9a4a803a8c1da79f66092f5485e3b154863d33b750fa5ad0189cb4343b19"
+    "path": "assets/snd/legacy/retired/background_synthwave.flac",
+    "sha256": "09cf9a4a803a8c1da79f66092f5485e3b154863d33b750fa5ad0189cb4343b19",
+    "previous_path": "sounds/legacy/retired/background_synthwave.flac"
   },
   {
     "original": "Games_files/Sounds/retired/background_techno_131.wav",
-    "path": "sounds/legacy/retired/background_techno_131.wav",
-    "sha256": "b7fde07a2b69c4ab5a23fce046477b85eab83e5ccad3a5dd1beb0dfbb54b4c8e"
+    "path": "assets/snd/legacy/retired/background_techno_131.wav",
+    "sha256": "b7fde07a2b69c4ab5a23fce046477b85eab83e5ccad3a5dd1beb0dfbb54b4c8e",
+    "previous_path": "sounds/legacy/retired/background_techno_131.wav"
   },
   {
     "original": "Games_files/Sounds/retired/end_game.wav",
-    "path": "sounds/legacy/retired/end_game.wav",
-    "sha256": "7d4caa71a1978a536278fa9dd7125f42bdf461a254be8637df517a1bf62f1c9f"
+    "path": "assets/snd/legacy/retired/end_game.wav",
+    "sha256": "7d4caa71a1978a536278fa9dd7125f42bdf461a254be8637df517a1bf62f1c9f",
+    "previous_path": "sounds/legacy/retired/end_game.wav"
   },
   {
     "original": "Games_files/Sounds/retired/point_scoring.wav",
-    "path": "sounds/legacy/retired/point_scoring.wav",
-    "sha256": "817233ebede171b71c9e90d83fdaec58d2684e352e0696fe5afd84936085f386"
+    "path": "assets/snd/legacy/retired/point_scoring.wav",
+    "sha256": "817233ebede171b71c9e90d83fdaec58d2684e352e0696fe5afd84936085f386",
+    "previous_path": "sounds/legacy/retired/point_scoring.wav"
   },
   {
     "original": "Games_files/Images/Background_game_1.jpg",
-    "path": "px/legacy/Background_game_1.jpg",
-    "sha256": "713568ca8e652bedf2daeb530cea30dca58b82741bca174ceb6be8584029143c"
+    "path": "assets/px/legacy/legacy/Background_game_1.jpg",
+    "sha256": "713568ca8e652bedf2daeb530cea30dca58b82741bca174ceb6be8584029143c",
+    "previous_path": "px/legacy/Background_game_1.jpg"
   },
   {
     "original": "Games_files/Images/Background_game_2.jpg",
-    "path": "px/legacy/Background_game_2.jpg",
-    "sha256": "e5220ad9b9d984a1cd4d3cce0efe7540e2668c023cb034b8207b32113daa9499"
+    "path": "assets/px/legacy/legacy/Background_game_2.jpg",
+    "sha256": "e5220ad9b9d984a1cd4d3cce0efe7540e2668c023cb034b8207b32113daa9499",
+    "previous_path": "px/legacy/Background_game_2.jpg"
   },
   {
     "original": "Games_files/Images/Background_game_3.jpg",
-    "path": "px/legacy/Background_game_3.jpg",
-    "sha256": "91c5bcb696cf01de4d5932c8d02a4693b47088b6e1559fd7ad1b19808b70d32a"
+    "path": "assets/px/legacy/legacy/Background_game_3.jpg",
+    "sha256": "91c5bcb696cf01de4d5932c8d02a4693b47088b6e1559fd7ad1b19808b70d32a",
+    "previous_path": "px/legacy/Background_game_3.jpg"
   },
   {
     "original": "Games_files/Images/logo_without_background.png",
-    "path": "px/legacy/logo_without_background.png",
-    "sha256": "632d0a8480bd4bd7ca490f2a08c5fbaf10a772ef4f98dcfd6d7779875498ee56"
+    "path": "assets/px/legacy/legacy/logo_without_background.png",
+    "sha256": "632d0a8480bd4bd7ca490f2a08c5fbaf10a772ef4f98dcfd6d7779875498ee56",
+    "previous_path": "px/legacy/logo_without_background.png"
   },
   {
     "original": "Games_files/Images/logo_with_background.jpg",
-    "path": "px/legacy/logo_with_background.jpg",
-    "sha256": "5ef07bb5ae3d775090115b0c25cd42e0adb6f813b2f206733d2141fcb358b800"
+    "path": "assets/px/legacy/legacy/logo_with_background.jpg",
+    "sha256": "5ef07bb5ae3d775090115b0c25cd42e0adb6f813b2f206733d2141fcb358b800",
+    "previous_path": "px/legacy/logo_with_background.jpg"
+  },
+  {
+    "original": "px/images/power_up_flaming_ball.png",
+    "sha256": "d26ac1fd5dad4376b3bd12524adbe664b42c33a3418a44ce1f4c1dba7c193935",
+    "path": "assets/px/powerups/power_up_flaming_ball.png",
+    "previous_path": "px/images/power_up_flaming_ball.png"
+  },
+  {
+    "original": "px/images/power_up_ghost.png",
+    "sha256": "f73d8445f47228cce454167cd12ff5a582ae25e0ee40fcf30492455ef8d000ad",
+    "path": "assets/px/powerups/power_up_ghost.png",
+    "previous_path": "px/images/power_up_ghost.png"
+  },
+  {
+    "original": "px/images/power_up_laser.png",
+    "sha256": "cc686fffdf7ac1427152f41e1be5ba63f1e2aae0161c84497b5f771f57903b2f",
+    "path": "assets/px/powerups/power_up_laser.png",
+    "previous_path": "px/images/power_up_laser.png"
+  },
+  {
+    "original": "px/images/power_up_lightning.png",
+    "sha256": "139022e0b97d7160a3c5c37b2f69277c4709cf784fc8c96ec8cea0ce5dbdfb65",
+    "path": "assets/px/powerups/power_up_lightning.png",
+    "previous_path": "px/images/power_up_lightning.png"
+  },
+  {
+    "original": "px/images/power_up_magic_bean.png",
+    "sha256": "e062808cd7dc1f593929a8e5d2bf8dc388dcaa008ec7ce1f9957eaf3c4a60c9e",
+    "path": "assets/px/powerups/power_up_magic_bean.png",
+    "previous_path": "px/images/power_up_magic_bean.png"
+  },
+  {
+    "original": "px/images/power_up_sabotage.png",
+    "sha256": "dcecf47e86240421931227e59a0946174811cfd3faf4a6fec3b7615d296f58a7",
+    "path": "assets/px/powerups/power_up_sabotage.png",
+    "previous_path": "px/images/power_up_sabotage.png"
+  },
+  {
+    "original": "px/images/power_up_shield.png",
+    "sha256": "79658e80ab4218a9cd36f0c30a2a4438a9ba2f4b2a7576f01a7bb20b3c033fbc",
+    "path": "assets/px/powerups/power_up_shield.png",
+    "previous_path": "px/images/power_up_shield.png"
   }
 ]

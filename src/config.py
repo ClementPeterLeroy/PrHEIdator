@@ -15,6 +15,8 @@ HORIZONTAL_SPEED = 500
 AI_SPEED = 400
 BALL_RADIUS = 5
 INTRO_SECONDS = 9.2
+COUNTDOWN_SECONDS = 3.0
+VERSION = "v2.1 — Arcade Renaissance"
 GAME_OVER_SECONDS = 2.8
 FLASH_SECONDS = 0.15
 
@@ -26,7 +28,7 @@ BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
-PLAYER_COLORS = (BLUE, RED, GREEN, YELLOW)
+PLAYER_COLORS = ((55, 155, 255), (255, 77, 128), (68, 240, 167), (255, 218, 82))
 CHARGE_COLORS = (WHITE, GRAY, RED, BLUE, GREEN, YELLOW)
 CONTROLS = (
     (pygame.K_a, pygame.K_q),
@@ -35,3 +37,11 @@ CONTROLS = (
     (pygame.K_v, pygame.K_b),
 )
 ATTACK_KEYS = (pygame.K_s, pygame.K_LEFT)
+
+# The simulation remains in the original coordinate space.
+BACKGROUND = (8, 11, 25)
+PANEL = (17, 23, 43)
+CYAN = (61, 231, 242)
+PURPLE = (170, 100, 255)
+TEXT = (235, 244, 255)
+MUTED_TEXT = (133, 151, 180)

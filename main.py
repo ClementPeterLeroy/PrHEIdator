@@ -1,4 +1,4 @@
-"""Launch PrHEIdator, a local Pygame game by Clement LEROY."""
+"""Launch Predator, originally PrHEIdator by Clement LEROY."""
 
 from src.app import main
 

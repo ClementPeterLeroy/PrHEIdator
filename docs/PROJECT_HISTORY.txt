@@ -1,4 +1,4 @@
-PrHEIdator — project history
+PrHEIdator â€” project history
 
 Original author credited in the school source: Clement LEROY.
 The name combines Predator and HEI, the school named by the project owner.
@@ -19,7 +19,7 @@ The remaining networking scripts demonstrate Flask/Kafka integration, but
 do not establish the availability or historical behavior of a mobile app.
 No original release dates, commit history or additional authorship are inferred.
 
-Modern development restarts at v2.0 — Game Rebirth, a new modernization
+Modern development restarts at v2.0 â€” Game Rebirth, a new modernization
 milestone rather than a claim that the historical source was only v1.
 Reliable modern version control is intended to start with this v2.0 baseline;
 the owner will establish that history manually. This task creates no Git
@@ -35,3 +35,12 @@ The historical assets are retained with their existing filenames in the
 modern asset folders. Unknown provenance and unused assets are listed in
 ASSET_REVIEW.md and the migration manifest. Retention does not establish
 permission to redistribute them.
+
+
+v2.1 ? Arcade Renaissance
+The modern local game is renamed Predator while preserving PrHEIdator and
+HEI origins. This unified patch introduces a retro-neon interface, scalable
+display, consistent match lifecycle and Fun mode with six temporary effects.
+The supplied Lightning icon is reserved, with no gameplay implementation.
+The v2.0 changelog and audit/validation/delivery records are retained. No
+release date, Git history or additional human authorship is inferred.

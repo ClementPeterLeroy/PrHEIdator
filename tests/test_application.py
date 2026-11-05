@@ -19,7 +19,8 @@ from src.app import Application
 from src.assets import EFFECTS, FONT, IMAGES, MUSIC, asset_path
 from src.config import GAME_OVER_SECONDS, INTRO_SECONDS, PROJECT_ROOT, STEP
 from src.modes import Mode
-from src.navigation import Navigation, Screen
+from src.navigation import Navigation, Screen, MENUS
+from src.settings import Settings
 
 
 def key_event(key):
@@ -28,13 +29,24 @@ def key_event(key):
 
 class ApplicationTests(unittest.TestCase):
     def setUp(self):
-        self.app = Application()
+        self.app = Application(settings=Settings(), persist=False)
         self.keys = defaultdict(bool)
 
     def tearDown(self):
         self.app.close()
         self.assertFalse(pygame.display.get_init())
         self.assertIsNone(pygame.mixer.get_init())
+
+    def play_mode(self, mode):
+        self.app.transition(mode)
+        self.app.start_match()
+        self.app.transition(Screen.PLAYING)
+
+    def click(self, position):
+        rect = self.app.viewport
+        pos = (round(rect.x + position[0] * rect.width / 800), round(rect.y + position[1] * rect.height / 450))
+        for event_type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
+            self.app.handle_event(pygame.event.Event(event_type, button=1, pos=pos))
 
     def advance(self, seconds):
         for _ in range(round(seconds / STEP) + 1):
@@ -59,6 +71,11 @@ class ApplicationTests(unittest.TestCase):
                 self.app.transition(screen)
                 self.app.navigation.selected = index
                 self.app.handle_event(key_event(pygame.K_RETURN))
+                self.assertEqual(self.app.pending_mode, mode)
+                self.assertEqual(self.app.navigation.screen, Screen.PRE_MATCH)
+                self.app.handle_event(key_event(pygame.K_RETURN))
+                self.assertEqual(self.app.navigation.screen, Screen.COUNTDOWN)
+                self.advance(3)
                 self.assertEqual(self.app.match.mode, mode)
                 self.assertEqual(self.app.navigation.screen, Screen.PLAYING)
                 for _ in range(20):
@@ -67,18 +84,16 @@ class ApplicationTests(unittest.TestCase):
 
     def test_first_mouse_click_works_before_first_draw(self):
         self.app.transition(Screen.MAIN)
-        self.app.handle_event(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(555, 55)))
+        self.click(self.app.navigation.rects()[0].center)
         self.assertEqual(self.app.navigation.screen, Screen.ONE_PLAYER)
 
-    def test_disabled_items_cannot_be_launched(self):
-        for screen, index in ((Screen.TWO_PLAYER, 2), (Screen.OPTIONS, 0)):
-            self.app.transition(screen)
-            self.app.navigation.selected = index
-            self.app.handle_event(key_event(pygame.K_RETURN))
-            self.assertEqual(self.app.navigation.screen, screen)
-            rect = self.app.navigation.rects(self.app.assets.fonts[45])[index]
-            self.app.handle_event(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=rect.center))
-            self.assertEqual(self.app.navigation.screen, screen)
+    def test_fun_is_selectable_and_neural_controls_are_not_exposed(self):
+        self.app.transition(Screen.TWO_PLAYER)
+        self.app.navigation.selected = 2
+        self.app.handle_event(key_event(pygame.K_RETURN))
+        self.assertEqual(self.app.pending_mode, Mode.FUN)
+        self.assertEqual(self.app.navigation.screen, Screen.PRE_MATCH)
+        self.assertFalse(any("DeepIA" in item.label for items in MENUS.values() for item in items))
 
     def test_empty_event_frames_do_not_repeat_menu_input(self):
         self.app.transition(Screen.MAIN)
@@ -87,10 +102,13 @@ class ApplicationTests(unittest.TestCase):
             self.app.update(STEP, self.keys)
         self.assertEqual(self.app.navigation.selected, 1)
 
-    def test_navigation_skips_disabled_fun(self):
+    def test_navigation_includes_fun_and_wraps(self):
         nav = Navigation()
         nav.go(Screen.TWO_PLAYER)
         nav.move(1)
+        nav.move(1)
+        self.assertEqual(nav.selected, 2)
+        self.assertEqual(nav.items[2].target, Mode.FUN)
         nav.move(1)
         self.assertEqual(nav.selected, 3)
         nav.move(1)
@@ -106,18 +124,19 @@ class ApplicationTests(unittest.TestCase):
         self.app.handle_event(key_event(pygame.K_ESCAPE))
         self.assertEqual(self.app.navigation.screen, Screen.MAIN)
 
-    def test_controls_move_all_four_paddles_and_escape_abandons_match(self):
-        self.app.transition(Mode.FOUR)
+    def test_controls_move_all_four_paddles_and_escape_pauses_match(self):
+        self.play_mode(Mode.FOUR)
         self.keys.update({pygame.K_a: True, pygame.K_DOWN: True, pygame.K_t: True, pygame.K_b: True})
         self.app.update(STEP, self.keys)
-        self.assertEqual([p.position for p in self.app.match.paddles], [197, 203, 370, 380])
+        for paddle, expected in zip(self.app.match.paddles, [197, 203, 370, 380]):
+            self.assertAlmostEqual(paddle.position, expected)
         self.app.handle_event(key_event(pygame.K_ESCAPE))
-        self.assertEqual(self.app.navigation.screen, Screen.MAIN)
-        self.assertIsNone(self.app.match)
+        self.assertEqual(self.app.navigation.screen, Screen.PAUSED)
+        self.assertIsNotNone(self.app.match)
 
     def test_poder_attack_is_connected_to_both_keys(self):
         for player, key, x in ((0, pygame.K_s, 25), (1, pygame.K_LEFT, 775)):
-            self.app.transition(Mode.PODER)
+            self.play_mode(Mode.PODER)
             self.keys.clear()
             self.keys[key] = True
             self.app.match.paddles[player].charge = 2
@@ -126,9 +145,9 @@ class ApplicationTests(unittest.TestCase):
             self.assertEqual(self.app.match.paddles[player].charge, 0)
             self.assertEqual(abs(self.app.match.ball.velocity.x), 1000)
 
-    def test_every_mode_game_over_returns_to_menu_without_further_scoring(self):
+    def test_every_mode_results_wait_for_choice_without_further_scoring(self):
         for mode in Mode:
-            self.app.transition(mode)
+            self.play_mode(mode)
             if mode == Mode.WALL:
                 self.app.match.ball.position.update(-10, 100)
             else:
@@ -142,16 +161,19 @@ class ApplicationTests(unittest.TestCase):
             self.app.update(STEP, self.keys)
             self.assertEqual(self.app.match.scores, scores)
             self.advance(GAME_OVER_SECONDS)
+            self.assertEqual(self.app.navigation.screen, Screen.GAME_OVER)
+            self.app.navigation.selected = 1
+            self.app.handle_event(key_event(pygame.K_RETURN))
             self.assertEqual(self.app.navigation.screen, Screen.MAIN)
             self.assertIsNone(self.app.match)
 
-    def test_score_flash_pauses_simulation_but_quit_stays_responsive(self):
-        self.app.transition(Mode.CLASSIC)
+    def test_score_feedback_is_nonblocking_and_quit_stays_responsive(self):
+        self.play_mode(Mode.CLASSIC)
         self.app.match.ball.position.update(810, 100)
         self.app.update(STEP, self.keys)
         position = self.app.match.ball.position.copy()
         self.app.update(STEP, self.keys)
-        self.assertEqual(self.app.match.ball.position, position)
+        self.assertNotEqual(self.app.match.ball.position, position)
         self.app.handle_event(pygame.event.Event(pygame.QUIT))
         self.assertFalse(self.app.running)
 
@@ -176,7 +198,7 @@ class ApplicationTests(unittest.TestCase):
     def test_fixed_step_is_independent_of_frame_batch_size(self):
         positions = []
         for dt, count in ((STEP, 10), (.05, 2)):
-            self.app.transition(Mode.CLASSIC)
+            self.play_mode(Mode.CLASSIC)
             for _ in range(count):
                 self.app.update(dt, self.keys)
             positions.append(self.app.match.ball.position.copy())
@@ -204,7 +226,7 @@ class AssetAndEntryTests(unittest.TestCase):
 
     def test_preserved_files_match_migration_checksums(self):
         records = json.loads((PROJECT_ROOT / 'docs/ASSET_MIGRATION.json').read_text())
-        self.assertEqual(len(records), 53)
+        self.assertEqual(len(records), 60)
         for record in records:
             self.assertEqual(hashlib.sha256((PROJECT_ROOT / record['path']).read_bytes()).hexdigest(),
                              record['sha256'], record['path'])
@@ -251,7 +273,7 @@ assert pygame.mixer.get_init() is None
 
     def test_audio_hardware_failure_still_allows_local_game(self):
         with patch.object(pygame.mixer, 'init', side_effect=pygame.error('No audio hardware')):
-            app = Application()
+            app = Application(settings=Settings(), persist=False)
         try:
             self.assertFalse(app.audio.enabled)
             app.transition(Mode.CLASSIC)

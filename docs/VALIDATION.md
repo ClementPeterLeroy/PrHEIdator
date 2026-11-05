@@ -1,72 +1,105 @@
-# Validation results
+# v2.1 — Arcade Renaissance: validation
 
 Environment: Windows, existing .venv_pong, Python 3.11.15, Pygame 2.6.1,
-SDL 2.28.4. The tests use SDL dummy video and audio drivers. No packages were
-installed or uninstalled during implementation.
+SDL 2.28.4. No dependencies were installed or uninstalled. No Git operations
+were performed. v2.0 results are retained in VALIDATION_V2_0.md.
 
-## Automated suite
+## Automated results
 
 ```powershell
-.venv_pong\Scripts\python.exe -m unittest discover -s tests -v
+.venv_pong\Scripts\python.exe -m unittest discover -s tests -q
 ```
 
-Observed final result: **45 tests passed**, 0 failures, 0 errors.
-The suite completed in approximately 3.6 seconds on the development machine.
+Latest result after UI refinement: **100 tests passed**, 0 failures/errors,
+approximately 12.7 seconds. All 45 v2.0 regression tests were retained/adapted
+for the intentional v2.1 behavior changes; 55 further tests cover new work.
+Tests use SDL dummy drivers. Simulation tests do not open a window.
 
-Covered behaviors:
+Four added refinement checks verify the supplied credits wording, opaque panel,
+text bounds/overlap at landscape and portrait sizes, BACK by keyboard/scaled
+mouse, removed persistent menu hints, retained version label and pre-match
+instructions. Gameplay simulation and rules are unchanged by this refinement.
 
-- Ball movement/reset and subpixel integration; vertical and horizontal
-  paddle bounds; four-player corner margins.
-- Top/bottom reflections, all four paddle directions, mirrored paddle
-  zones, bounded edge acceleration and prevention of repeated overlap flips.
-- Fresh initialization of all five modes; rejection of Fun/DeepIA as modes.
-- Classic point ownership, first-to-five completion and frozen finished matches.
-- Wall right-side scoring beyond five and left-miss completion.
-- Four-player last-touch scoring for all players on all exits and no points
-  before the first touch.
-- AI detection/tracking boundaries and equivalence of the exact CDF to the
-  effective historical numerical integral for a deterministic sample.
-- Poder centre-hit charges, charge cap, proximity/alignment requirements,
-  both attack directions, charge loss on a missed point and collision of a
-  high-speed shot with an aligned opponent.
-- Keyboard mode selection, initial mouse click before rendering, skipped
-  disabled choices, empty-event frames and all menu renders.
-- All four paddle controls, both attack keys, Esc navigation, intro expiry/
-  skip, game-over expiry in every mode and responsive quit during flashes.
-- Fixed-step equivalence across frame batching, music reuse and mute.
-- Quit handling in every screen and application-loop quit processing.
-- Real decoder loading of all 19 unique active assets and all 50 retained
-  media files, including unused and retired variants.
-- SHA-256 verification of all 53 relocated files against the migration record.
-- Real main.py invocation from docs/ in a subprocess, with connection APIs
-  blocked and SDL cleanup asserted after exit.
-- Silent operation when mixer initialization fails, and main-function
-  cleanup after both initialization and runtime exceptions.
+Deliberate regression expectation updates: mode choice opens a briefing rather
+than immediate gameplay; Fun becomes selectable and DeepIA is absent; Esc
+pauses instead of abandoning; results wait for a choice; feedback no longer
+pauses physics; click activation uses matching press/release. Substep paddle
+positions are compared with floating-point tolerance. No gameplay regression
+was removed to hide a failing implementation.
 
-An initial run had 42 passing tests and a Windows permission error removing
-a test-only temporary directory. The entry-point test now uses the existing
-docs/ working directory, requires no temporary filesystem cleanup and passes.
+Coverage includes:
 
-## Additional checks
+- All six home actions, Solo/Versus/Free-for-All branches, Options/Credits/Exit,
+  mouse and keyboard selection, initial clicks, wrapping, hover consistency,
+  ignored key repeats, matching click edges and Back navigation.
+- Briefing and countdown for every mode; simulation frozen until countdown
+  completes; pause/resume, focus loss, paused countdown time, restart, results,
+  Play Again, score/charge/effect resets and dropping matches on menu return.
+- All existing mode movement, boundaries, collision directions/zones, bot,
+  scoring, wall survival, first-to-five, Poder attacks and last-touch scoring.
+- Randomized/seeded Fun spawning and intervals, safe positioning, overlap
+  collection, last-touch/serve ownership, no stacking, no spawning during active
+  effects and fresh delays after expiry.
+- Giant/Sabotage resize and restoration, Hyperball direction/scale/tunneling,
+  Phantom warning/visibility/physical returns, Straight Shot aim and restored
+  vertical motion, Shield survival/consumption/no-point behavior on both sides,
+  expiry, rally cleanup, paused timers and reserved Lightning exclusion.
+- Resizing, 16:9 viewports, inverse mouse mapping at three window sizes,
+  letterbox rejection and fullscreen/windowed toggles with dummy SDL.
+- Actual music/effect volume values, slider input, mute, reduced flash, audio
+  pause/resume/restart, silent audio initialization/decoder failure and settings
+  save/load validation, corrupt preferences and save-permission failure.
+- Real asset decoders for all retained media, all 60 migration hashes,
+  image-cache reuse during rendering, every gameplay overlay and top-paddle
+  visibility under the Free-for-All scoreboard.
+- Actual main.py execution from another working directory with connection APIs
+  blocked; quit in every screen and cleanup after initialization/runtime errors.
 
-- Before refactoring, each original implemented gameplay loop ran for 15
-  frames headlessly with no exception. This was a short baseline, not full
-  verification of the old game's functionality.
-- Six rendered screen captures were generated under the ignored
-  .diagnostics/ directory. Main, two-player, credits, Poder and four-player
-  captures were visually inspected; the original visual arrangement is retained.
-- Active source was checked for debug prints, Flask, Kafka, NumPy, remote
-  URLs and external controller references; none remain in src/ or main.py.
-- Original scripts remain text snapshots. No third-party asset was generated,
-  overwritten or discarded.
+## Native application launch
 
-## Testing limits
+```powershell
+.venv_pong\Scripts\python.exe scripts/smoke_desktop.py
+```
 
-No physical-keyboard multiplayer session, human audio listening, long-form
-interactive balance comparison, installer test, fresh environment install or
-macOS/Linux run was performed. Headless tests establish code paths and decoder
-compatibility, not perceived gameplay quality or physical audio output.
+Observed: **native SDL driver windows**, 410 frames, no network access, clean
+display/mixer shutdown. Visited INTRO, MAIN, ONE_PLAYER, PRE_MATCH, COUNTDOWN,
+PLAYING and PAUSED. The scripted native run is muted and does not save user
+preferences. It executes the real main.py rather than a replacement loop.
+This is an actual desktop-window launch, separate from dummy-driver tests.
 
-In particular, review the documented collision symmetry/corner-margin fixes
-against desired gameplay feel. Unimplemented modes remain disabled. Provenance
-and redistribution rights remain a manual task and are not validated by tests.
+## Visual previews
+
+```powershell
+.venv_pong\Scripts\python.exe scripts/capture_previews.py
+```
+
+Twelve previews are generated from explicit fixtures using the actual renderer,
+not concept art or claimed recordings of human matches:
+
+- home.png, options.png, credits.png
+- fun-briefing.png, poder-briefing.png, free-for-all-briefing.png
+- countdown.png, pause.png, results.png
+- fun-arena.png, fun-pickup.png, free-for-all.png
+
+Visual inspection covered home, briefings, options, credits, Fun arena/pickup,
+pause, results and Free-for-All. It found and prompted fixes for overlapping
+horizontal control diagrams and the score panel obscuring the top paddle.
+Previews are in docs/previews/; generation changes no runtime assets.
+
+## Remaining manual validation
+
+The v2.1 UI refinement previews were refreshed and inspected: home, Options,
+Credits and the Free-for-All briefing. Credits were additionally inspected at
+800x450, 1120x630 and 600x800 (portrait letterboxing). Section text is fully
+inside an opaque panel; the grid does not cross it, and BACK is below it.
+The logo, version label and pre-match instructions remain. Physical high-DPI
+readability and other operating systems were not visually verified.
+
+- Long interactive games, competitive Fun balance and human gameplay feel.
+- Physical four-player key rollover and simultaneous Poder key combinations.
+- Audible output and subjective levels on real audio devices; native smoke is muted.
+- Fullscreen behavior on physical multi-monitor setups and macOS/Linux.
+- Clean-machine dependency installation and packaging.
+- Provenance, attribution, redistribution permissions and a source-code license.
+
+Headless tests and a scripted native launch do not replace these owner checks.

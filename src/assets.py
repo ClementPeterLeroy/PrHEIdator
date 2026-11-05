@@ -4,33 +4,37 @@ import pygame
 
 from .config import PROJECT_ROOT
 from .modes import Mode
+from .powerups import POWERUP_FILES, RESERVED_FILE
 
 MUSIC = {
-    "intro": "sounds/music/generique.mp3",
-    "menu": "sounds/music/Menu.wav",
-    Mode.CLASSIC: "sounds/music/2joueurs.wav",
-    Mode.PODER: "sounds/music/PODER.wav",
-    Mode.AI: "sounds/music/VsIA.wav",
-    Mode.WALL: "sounds/music/VsWall.wav",
-    Mode.FOUR: "sounds/music/4joueurs.wav",
+    "intro": "assets/snd/music/generique.mp3",
+    "menu": "assets/snd/music/Menu.wav",
+    Mode.CLASSIC: "assets/snd/music/2joueurs.wav",
+    Mode.FUN: "assets/snd/music/2joueurs.wav",
+    Mode.PODER: "assets/snd/music/PODER.wav",
+    Mode.AI: "assets/snd/music/VsIA.wav",
+    Mode.WALL: "assets/snd/music/VsWall.wav",
+    Mode.FOUR: "assets/snd/music/4joueurs.wav",
 }
 EFFECTS = {
-    "paddle": "sounds/effects/reboundJoueur2.wav",
-    "wall": "sounds/effects/reboundWallH.wav",
-    "wall_point": "sounds/effects/reboundVsWall.wav",
-    "game_over": "sounds/effects/losing.wav",
-    "plus": "sounds/effects/plusOne.wav",
-    "point": "sounds/effects/minusOne.wav",
-    "miss": "sounds/effects/minusOne.wav",
-    "speed": "sounds/effects/speed.wav",
-    "attack": "sounds/effects/nani.wav",
+    "paddle": "assets/snd/sfx/reboundJoueur2.wav",
+    "wall": "assets/snd/sfx/reboundWallH.wav",
+    "wall_point": "assets/snd/sfx/reboundVsWall.wav",
+    "game_over": "assets/snd/sfx/losing.wav",
+    "plus": "assets/snd/sfx/plusOne.wav",
+    "point": "assets/snd/sfx/minusOne.wav",
+    "miss": "assets/snd/sfx/minusOne.wav",
+    "speed": "assets/snd/sfx/speed.wav",
+    "pickup": "assets/snd/sfx/plusOne.wav",
+    "shield": "assets/snd/sfx/reboundVsWall.wav",
+    "attack": "assets/snd/sfx/nani.wav",
 }
 IMAGES = {
-    "logo": "px/images/logo.png",
-    "title": "px/images/title.png",
-    "menu_title": "px/images/Gtitle.png",
+    "logo": "assets/px/branding/logo.png",
+    "title": "assets/px/branding/title.png",
+    "menu_title": "assets/px/branding/Gtitle.png",
 }
-FONT = "px/fonts/WRESTLEMANIA.ttf"
+FONT = "assets/px/fonts/WRESTLEMANIA.ttf"
 
 
 def asset_path(relative):
@@ -43,4 +47,9 @@ class Assets:
                        for name, path in IMAGES.items()}
         self.images["logo"] = pygame.transform.scale(self.images["logo"], (200, 200))
         self.images["menu_title"] = pygame.transform.scale(self.images["menu_title"], (200, 75))
-        self.fonts = {size: pygame.font.Font(asset_path(FONT), size) for size in (22, 28, 45, 72)}
+        self.fonts = {size: pygame.font.Font(None, size) for size in
+                      (16, 18, 20, 22, 24, 26, 28, 32, 36, 40, 45, 48, 56, 64, 72, 96)}
+        self.powerups = {kind: pygame.transform.smoothscale(
+            pygame.image.load(asset_path("assets/px/powerups/" + filename)).convert_alpha(), (28, 28))
+            for kind, filename in POWERUP_FILES.items()}
+        self.reserved = pygame.image.load(asset_path("assets/px/powerups/" + RESERVED_FILE)).convert_alpha()

@@ -96,8 +96,8 @@ class RuleTests(unittest.TestCase):
                 match.scores[0] = 4
                 self.assertEqual(Match(mode).scores[0], 0)
 
-    def test_no_fun_or_neural_mode_is_exposed(self):
-        for name in ("Fun", "DeepIA"):
+    def test_neural_mode_is_not_exposed(self):
+        for name in ("DeepIA", "Neural"): 
             with self.assertRaises(ValueError):
                 Match(name)
 
